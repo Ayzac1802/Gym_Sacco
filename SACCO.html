@@ -1,48 +1,397 @@
-<div class="card-meta"><span>⭐ 4.5</span><span>📍 1.0km</span><span>🕐 8am–9pm</span></div><span class="badge badge-lime">Herbal & OTC</span><div class="card-price">From UGX 1,000 <small>/item</small></div></div><button class="card-action">Visit</button></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>SACCO Payment Tracker</title>
+<meta name="theme-color" content="#1a6b3c">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#f5f3ee;--surface:#ece9e2;--card:#ffffff;--border:#ddd9d0;
+  --accent:#1a6b3c;--accent-light:#e8f5ee;
+  --accent2:#c8860a;--accent2-light:#fef3e0;
+  --danger:#c0392b;--danger-light:#fdecea;
+  --blue:#1a5fb4;--blue-light:#e8f0fb;
+  --purple:#6b3ca8;--purple-light:#f0e8fb;
+  --text:#1a1a1a;--muted:#888074;
+  --paid-bg:#1a6b3c;--unpaid-bg:#e5e1d8;
+  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,.07);
+  --sticky-w:220px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 18px;-webkit-tap-highlight-color:transparent;}
+
+.tab-nav{max-width:1400px;margin:0 auto 20px;display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:5px;}
+.tab-btn{flex:1;padding:10px 14px;border:none;background:transparent;border-radius:9px;font-family:inherit;font-size:0.83rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.tab-btn.active{background:var(--accent);color:#fff;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+.app-header{max-width:1400px;margin:0 auto 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.logo-area{display:flex;align-items:center;gap:14px;}
+.logo-icon{width:48px;height:48px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 12px rgba(26,107,60,.25);}
+.group-name-input{background:transparent;border:none;border-bottom:1.5px solid var(--border);color:var(--text);font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3vw,1.9rem);font-weight:700;outline:none;min-width:160px;max-width:300px;transition:border-color .2s;}
+.group-name-input:focus{border-color:var(--accent);}
+
+.stats-bar{max-width:1400px;margin:0 auto 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stat-card.green::before{background:var(--accent);}
+.stat-card.gold::before{background:var(--accent2);}
+.stat-card.red::before{background:var(--danger);}
+.stat-card.blue::before{background:var(--blue);}
+.stat-card.purple::before{background:var(--purple);}
+.stat-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:5px;}
+.stat-value{font-size:1.25rem;font-weight:700;}
+
+.toolbar{max-width:1400px;margin:0 auto 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.week-strip{max-width:1400px;margin:0 auto 16px;background:var(--accent-light);padding:14px;border-radius:10px;gap:14px;align-items:flex-end;flex-wrap:wrap;}
+.week-strip label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:3px;}
+.week-strip input{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;font-family:inherit;}
+
+.table-outer{max-width:1400px;margin:0 auto 28px;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);background:var(--card);overflow:hidden;}
+.table-scroll{overflow-x:auto;max-width:100%;}
+table{width:max-content;min-width:100%;border-collapse:collapse;font-size:0.83rem;}
+th{padding:11px 13px;text-align:left;font-size:0.65rem;text-transform:uppercase;color:var(--muted);border-bottom:1.5px solid var(--border);background:var(--card);white-space:nowrap;}
+td{padding:9px 13px;border-bottom:1px solid #f0ece4;vertical-align:middle;white-space:nowrap;}
+th.sticky-col,td.sticky-col{position:sticky;left:0;z-index:2;background:var(--card);border-right:2px solid var(--border);min-width:var(--sticky-w);max-width:var(--sticky-w);white-space:normal;word-break:break-word;}
+th.sticky-col{z-index:3;}
+tr:hover td.sticky-col{background:#fafaf8;}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:0.8rem;font-weight:600;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#155c33;}
+.btn-gold{background:var(--accent2);color:#fff;}
+.btn-danger{background:var(--danger-light);color:var(--danger);}
+.btn-week{background:var(--accent-light);color:var(--accent);border:1.5px solid #b7ddc8;}
+.btn-blue{background:var(--blue-light);color:var(--blue);border:1.5px solid #b3c9ef;}
+.btn-purple{background:var(--purple-light);color:var(--purple);border:1.5px solid #c9b3e9;}
+.btn-sm{padding:4px 9px;font-size:0.72rem;}
+.btn-icon{padding:5px 8px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.8rem;}
+
+.pay-check{display:none;}
+.check-box{width:24px;height:24px;border-radius:6px;border:2px solid var(--border);background:var(--unpaid-bg);display:flex;align-items:center;justify-content:center;transition:all .18s;cursor:pointer;}
+.pay-check:checked+.check-label .check-box{background:var(--paid-bg);border-color:var(--paid-bg);}
+.pay-check:checked+.check-label .check-box::after{content:'checkmark';color:#fff;font-size:13px;font-weight:700;}
+.amt-input{width:80px;background:#f5f3ee;border:1px solid var(--border);border-radius:5px;font-size:0.73rem;padding:3px 6px;text-align:right;font-family:inherit;}
+.sav-input{width:90px;background:#fffbf0;border:1px solid #e8d89a;border-radius:5px;font-size:0.73rem;padding:3px 6px;text-align:right;font-family:inherit;}
+
+.order-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.75rem;font-weight:700;cursor:pointer;}
+
+.loans-header{max-width:1400px;margin:0 auto 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.loans-table-wrap{max-width:1400px;margin:0 auto 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow-x:auto;}
+.loan-status{padding:3px 9px;border-radius:12px;font-size:0.7rem;font-weight:600;}
+.loan-status.active{background:#fff3e0;color:#c8860a;}
+.loan-status.repaid{background:var(--accent-light);color:var(--accent);}
+.loan-status.partial{background:var(--blue-light);color:var(--blue);}
+
+.savings-summary{max-width:1400px;margin:0 auto 20px;background:var(--card);border:1px solid #e8d89a;border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow);}
+.savings-summary h3{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;}
+.sav-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f5f0e0;font-size:0.83rem;gap:12px;flex-wrap:wrap;}
+.sav-row:last-child{border-bottom:none;}
+
+/* Accumulated savings highlight */
+.sav-accumulated{background:var(--accent-light);border-radius:8px;padding:4px 10px;font-weight:700;color:var(--accent);font-size:0.82rem;}
+.sav-deferred{background:#fff3e0;border-radius:8px;padding:4px 10px;font-weight:700;color:var(--accent2);font-size:0.82rem;}
+
+/* Live pool banner */
+.pool-banner{max-width:1400px;margin:0 auto 16px;background:linear-gradient(135deg,#1a6b3c,#155c33);color:#fff;border-radius:12px;padding:18px 22px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;box-shadow:0 4px 16px rgba(26,107,60,0.25);}
+.pool-banner .pool-val{font-size:2rem;font-weight:700;font-family:'Playfair Display',serif;}
+.pool-banner .pool-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;opacity:0.7;margin-bottom:2px;}
+.pool-divider{width:1px;height:50px;background:rgba(255,255,255,0.2);}
+
+.payout-panel{max-width:1400px;margin:0 auto 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.payout-panel h3{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;}
+.payout-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f0ece4;font-size:0.84rem;}
+.payout-row:last-child{border-bottom:none;}
+.payout-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;}
+
+/* Deferred payout records */
+.deferred-list{max-width:1400px;margin:0 auto 20px;background:var(--card);border:1px solid #f0c060;border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow);}
+.deferred-list h3{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin-bottom:12px;}
+.deferred-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f5f0e0;font-size:0.83rem;flex-wrap:wrap;}
+.deferred-row:last-child{border-bottom:none;}
+.deferred-badge{background:#fff3e0;color:var(--accent2);border-radius:100px;padding:3px 10px;font-size:0.68rem;font-weight:700;}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);z-index:100;align-items:center;justify-content:center;padding:24px;}
+.overlay.open{display:flex;}
+.modal{background:var(--card);border-radius:14px;padding:26px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto;}
+.modal h3{margin-bottom:16px;font-family:'Playfair Display',serif;}
+.modal input,.modal select,.modal textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.84rem;font-family:inherit;margin-bottom:10px;background:#fff;}
+.modal label{font-size:0.72rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:block;margin-bottom:4px;}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#fff;border-radius:10px;padding:12px 20px;font-size:0.83rem;opacity:0;transition:.3s;z-index:200;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(-10px);}
+.search-input{padding:8px 12px;border-radius:8px;border:1px solid var(--border);font-family:inherit;font-size:0.82rem;background:#fff;min-width:180px;}
+.loan-stats{max-width:1400px;margin:0 auto 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
+
+/* Savings pulse animation when payment toggled */
+@keyframes poolPulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+.pool-pulse{animation:poolPulse 0.4s ease;}
+
+@media(max-width:600px){.toolbar{gap:6px;}.btn{padding:7px 11px;font-size:0.76rem;}.pool-divider{display:none;}}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo-area">
+    <div class="logo-icon">🌱</div>
+    <div>
+      <input class="group-name-input" id="groupName" placeholder="SACCO Name…"/>
+      <div style="font-size:0.75rem;color:var(--muted);">Payment Tracker</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-gold" onclick="exportCSV()">⬇ Export</button>
+    <button class="btn btn-danger" onclick="clearAll()">🗑 Clear All</button>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('payments')">💳 Payments</button>
+  <button class="tab-btn" onclick="switchTab('savings')">💰 Savings</button>
+  <button class="tab-btn" onclick="switchTab('payout')">🏆 Payout Order</button>
+  <button class="tab-btn" onclick="switchTab('loans')">🤝 Loans</button>
+</div>
+
+<!-- ═══════════════ PAYMENTS TAB ═══════════════ -->
+<div id="tab-payments" class="tab-pane active">
+
+  <!-- Live Savings Pool Banner -->
+  <div class="pool-banner" id="poolBanner">
+    <div>
+      <div class="pool-label">Accumulated Savings Pool</div>
+      <div class="pool-val" id="bannerPoolTotal">UGX 0</div>
+      <div style="font-size:0.72rem;opacity:0.65;margin-top:2px;">Updates every time a payment is recorded</div>
+    </div>
+    <div class="pool-divider"></div>
+    <div>
+      <div class="pool-label">This Week's Deduction</div>
+      <div style="font-size:1.2rem;font-weight:700;" id="bannerWeekSavings">UGX 0</div>
+    </div>
+    <div class="pool-divider"></div>
+    <div>
+      <div class="pool-label">Deferred Payouts Saved</div>
+      <div style="font-size:1.2rem;font-weight:700;" id="bannerDeferred">UGX 0</div>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card green"><div class="stat-label">Members</div><div class="stat-value" id="statMembers">0</div></div>
+    <div class="stat-card gold"><div class="stat-label">Collected</div><div class="stat-value" id="statTotal">UGX 0</div></div>
+    <div class="stat-card blue"><div class="stat-label">Weeks</div><div class="stat-value" id="statWeeks">0</div></div>
+    <div class="stat-card red"><div class="stat-label">Unpaid Slots</div><div class="stat-value" id="statUnpaid">0</div></div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="openAddMember()">+ Member</button>
+    <button class="btn btn-week" onclick="toggleWeekStrip()">📅 Generate Weeks</button>
+    <button class="btn" style="background:#555;color:#fff;" onclick="openAddColumn()">+ Column</button>
+    <input class="search-input" id="searchInput" placeholder="Search member…" oninput="renderTable()" style="margin-left:auto;"/>
+  </div>
+
+  <div class="week-strip" id="weekStrip" style="display:none;max-width:1400px;margin:0 auto 16px;">
+    <div><label>Start Date</label><input type="date" id="weekStart"></div>
+    <div><label>How Many Weeks</label><input type="number" id="weekCount" value="4" style="width:60px;"></div>
+    <div><label>UGX Per Week</label><input type="number" id="weekAmount" value="10000" style="width:110px;"></div>
+    <button class="btn btn-primary" onclick="generateWeeks()">Create Columns</button>
+  </div>
+
+  <div class="table-outer">
+    <div class="table-scroll">
+      <table id="mainTable">
+        <thead><tr id="headerRow"></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
     </div>
   </div>
 </div>
 
-<!-- MORE PAGE -->
-<div class="page" id="pg-more">
-  <nav><button class="nav-back" onclick="goBack()">← Back</button><div class="nav-logo">LOC<em>A</em>TE</div><div class="nav-right"><button class="sos-btn" onclick="document.getElementById('sos-overlay').classList.add('open')"><span class="sos-dot"></span>SOS</button></div></nav>
-  <div class="page-header" style="background:linear-gradient(135deg,#8b1a4a,#c42860)"><span class="ph-accent">All Services</span><div class="ph-icon">📦</div><h1>More Services</h1><p>Laundry, tutors, salons, printing and everything a student needs.</p><div class="ph-campus-badge"><span class="dot"></span><span id="inner-campus-more">Campus</span></div></div>
-  <div class="page-content">
-    <div class="page-search"><span style="color:#bbb">🔍</span><input type="text" placeholder="Search other services…"/></div>
-    <div class="mini-bubbles" style="position:relative">
-      <div class="mini-bubble b-navy"   onclick="showToast('Laundry — coming soon!')"><div class="b-icon">👕</div></div>
-      <div class="mini-bubble b-green"  onclick="showToast('Tutors — coming soon!')"><div class="b-icon">📖</div></div>
-      <div class="mini-bubble b-maroon" onclick="showToast('Salons — coming soon!')"><div class="b-icon">✂️</div></div>
-      <div class="mini-bubble b-teal"   onclick="showToast('Printing — coming soon!')"><div class="b-icon">🖨️</div></div>
-      <div class="mini-bubble b-purple" onclick="showToast('Delivery — coming soon!')"><div class="b-icon">🛵</div></div>
-      <div class="mini-bubble b-rust"   onclick="showToast('Stationery — coming soon!')"><div class="b-icon">📎</div></div>
+<!-- ═══════════════ SAVINGS TAB ═══════════════ -->
+<div id="tab-savings" class="tab-pane">
+  <div class="stats-bar">
+    <div class="stat-card gold"><div class="stat-label">Accumulated Pool</div><div class="stat-value" id="statSavingsTotal">UGX 0</div></div>
+    <div class="stat-card green"><div class="stat-label">Members Saving</div><div class="stat-value" id="statSavingsCount">0</div></div>
+    <div class="stat-card blue"><div class="stat-label">Avg Accumulated</div><div class="stat-value" id="statSavingsAvg">UGX 0</div></div>
+    <div class="stat-card purple"><div class="stat-label">Deferred Payouts</div><div class="stat-value" id="statDeferredTotal">UGX 0</div></div>
+  </div>
+
+  <div style="max-width:1400px;margin:0 auto 10px;background:var(--accent2-light);border:1px solid #f0c060;border-radius:10px;padding:14px 18px;font-size:0.83rem;color:#7a5000;">
+    <strong>How savings accumulate:</strong> Each member sets a weekly savings rate. Every time a payment is ticked for a member in a week, their savings rate for that week is added to the pool. The pool total shown here reflects <em>actual paid weeks only</em>, not just scheduled weeks.
+  </div>
+
+  <div style="max-width:1400px;margin:12px auto 14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <button class="btn btn-gold" onclick="setAllSavings()">Set All to Same Rate</button>
+  </div>
+
+  <div class="savings-summary" id="savingsList">
+    <h3>Member Savings — Accumulated from Paid Weeks</h3>
+    <div id="savingsRows"></div>
+  </div>
+
+  <!-- Deferred Payouts Section -->
+  <div class="deferred-list" id="deferredListWrap">
+    <h3>💛 Deferred Payout Records</h3>
+    <div id="deferredRows"><p style="color:var(--muted);font-size:0.82rem;">No deferred payouts yet.</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAYOUT TAB ═══════════════ -->
+<div id="tab-payout" class="tab-pane">
+  <div style="max-width:1400px;margin:0 auto 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <div style="font-size:0.82rem;color:var(--muted);">Set which member receives the payout each week. A member can also choose to defer (save) their payout.</div>
+    <button class="btn btn-primary" style="margin-left:auto;" onclick="autoAssignOrder()">Auto-Assign Order</button>
+    <button class="btn btn-blue" onclick="clearOrder()">Clear Order</button>
+  </div>
+
+  <div style="max-width:1400px;margin:0 auto 20px;display:grid;grid-template-columns:1fr 1fr;gap:16px;flex-wrap:wrap;">
+    <div>
+      <div class="payout-panel">
+        <h3>Payout Schedule</h3>
+        <div id="payoutSchedule"><p style="color:var(--muted);font-size:0.82rem;">No order set yet.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="payout-panel">
+        <h3>Payout Calculator — This Week</h3>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.72rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:block;margin-bottom:4px;">Select Payout Week</label>
+          <select id="payoutWeekSelect" onchange="calcPayout()" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.83rem;">
+            <option value="">-- Choose Week --</option>
+          </select>
+        </div>
+        <div id="payoutResult" style="font-size:0.83rem;color:var(--muted);">Select a week to calculate.</div>
+        <!-- Defer button shown after calculation -->
+        <div id="deferBtnWrap" style="display:none;margin-top:14px;">
+          <div style="background:#fffbf0;border:1px solid #e8d89a;border-radius:10px;padding:12px 14px;">
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">The recipient can choose to <strong>save their payout</strong> instead of receiving it in cash.</div>
+            <button class="btn btn-gold" onclick="openDeferPayout()">💛 Record as Saved (Deferred)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-outer">
+    <div class="table-scroll">
+      <table style="width:100%;">
+        <thead>
+          <tr>
+            <th>Order</th><th>Member</th><th>Phone</th><th>Deferred Total</th><th>Move</th>
+          </tr>
+        </thead>
+        <tbody id="orderTableBody"></tbody>
+      </table>
     </div>
   </div>
 </div>
 
-<!-- PROVIDER PAGE -->
-<div class="page" id="pg-provider">
-  <nav><button class="nav-back" onclick="goBack()">← Back</button><div class="nav-logo">LOC<em>A</em>TE</div><div class="nav-right"><button class="sos-btn" onclick="document.getElementById('sos-overlay').classList.add('open')"><span class="sos-dot"></span>SOS</button></div></nav>
-  <div class="page-header"><span class="ph-accent">Join LOCATE</span><div class="ph-icon">🤝</div><h1>Become a Provider</h1><p>Reach thousands of students and grow your business. Free to apply.</p><div class="ph-campus-badge"><span class="dot"></span><span id="inner-campus-provider">Campus</span></div></div>
-  <div class="page-content">
-    <div class="form-card">
-      <h3>Why List on LOCATE?</h3><p>Join 500+ providers already serving students across Uganda.</p>
-      <div class="benefit-row"><div class="bi-icon">📣</div><div class="bi-text"><h4>Reach Thousands of Students</h4><p>Get discovered by students actively searching for your service.</p></div></div>
-      <div class="benefit-row"><div class="bi-icon">⭐</div><div class="bi-text"><h4>Build Your Reputation</h4><p>Collect verified reviews and ratings from real students.</p></div></div>
-      <div class="benefit-row"><div class="bi-icon">💬</div><div class="bi-text"><h4>Direct Messaging</h4><p>Students reach you in-app — no missed calls.</p></div></div>
-      <div class="benefit-row"><div class="bi-icon">📊</div><div class="bi-text"><h4>Free Analytics Dashboard</h4><p>Track views, enquiries and bookings from your panel.</p></div></div>
+<!-- ═══════════════ LOANS TAB ═══════════════ -->
+<div id="tab-loans" class="tab-pane">
+  <div class="loan-stats">
+    <div class="stat-card red"><div class="stat-label">Total Lent Out</div><div class="stat-value" id="statLoanTotal">UGX 0</div></div>
+    <div class="stat-card gold"><div class="stat-label">Outstanding</div><div class="stat-value" id="statLoanOutstanding">UGX 0</div></div>
+    <div class="stat-card green"><div class="stat-label">Repaid</div><div class="stat-value" id="statLoanRepaid">UGX 0</div></div>
+    <div class="stat-card blue"><div class="stat-label">Active Loans</div><div class="stat-value" id="statLoanCount">0</div></div>
+  </div>
+  <div class="loans-header">
+    <button class="btn btn-primary" onclick="openAddLoan()">+ Record Loan</button>
+    <input class="search-input" id="loanSearch" placeholder="Search borrower…" oninput="renderLoans()" style="margin-left:auto;"/>
+  </div>
+  <div class="loans-table-wrap">
+    <table style="width:100%;">
+      <thead><tr>
+        <th>Borrower</th><th>Amount</th><th>Date</th><th>Due Date</th>
+        <th>Repaid</th><th>Outstanding</th><th>Status</th><th>Note</th><th>Actions</th>
+      </tr></thead>
+      <tbody id="loansBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+<div class="overlay" id="memberModal">
+  <div class="modal">
+    <h3 id="memberModalTitle">Add Member</h3>
+    <label>Full Name</label><input id="memberName" placeholder="e.g. Aisha Nakato"/>
+    <label>Phone Number</label><input id="memberPhone" placeholder="e.g. 0712 345678"/>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('memberModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMember()">Save</button>
     </div>
-    <div class="form-card">
-      <h3>Apply Now</h3><p>We review applications within 24 hours.</p>
-      <div class="fg-row"><div class="fg"><label>First Name</label><input type="text" placeholder="John"/></div><div class="fg"><label>Last Name</label><input type="text" placeholder="Doe"/></div></div>
-      <div class="fg"><label>Business / Service Name</label><input type="text" placeholder="e.g. John's Auto Repairs"/></div>
-      <div class="fg"><label>University</label><select id="provider-uni-select"><option value="">Select university</option></select></div>
-      <div class="fg"><label>Campus</label><select id="provider-campus-select"><option value="">Select campus</option></select></div>
-      <div class="fg"><label>Service Category</label><select><option value="">Select a category</option><option>Hostel / Accommodation</option><option>Restaurant / Food</option><option>Pharmacy / Health</option><option>Mechanic</option><option>Plumber</option><option>Carpenter</option><option>Electrician</option><option>Laundry</option><option>Salon / Barber</option><option>Tutoring</option><option>Other</option></select></div>
-      <div class="fg-row"><div class="fg"><label>Phone</label><input type="tel" placeholder="+256 700 000 000"/></div><div class="fg"><label>Email</label><input type="email" placeholder="you@example.com"/></div></div>
-      <div class="fg"><label>Location / Address</label><input type="text" placeholder="Near campus gate or landmark"/></div>
-      <div class="fg"><label>Describe Your Service</label><textarea placeholder="Hours, pricing, what makes you great…"></textarea></div>
-      <button class="btn-navy" onclick="submitProviderForm()">Submit Application →</button>
+  </div>
+</div>
+
+<div class="overlay" id="columnModal">
+  <div class="modal">
+    <h3>Add Custom Column</h3>
+    <label>Column Name</label><input id="colName" placeholder="e.g. Registration Fee"/>
+    <label>Default Amount (UGX)</label><input id="colAmount" type="number" placeholder="e.g. 10000"/>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('columnModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveColumn()">Add Column</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="loanModal">
+  <div class="modal">
+    <h3 id="loanModalTitle">Record Loan</h3>
+    <label>Borrower</label>
+    <select id="loanMember" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.84rem;margin-bottom:10px;background:#fff;"></select>
+    <label>Loan Amount (UGX)</label><input id="loanAmount" type="number" placeholder="e.g. 500000"/>
+    <label>Date Issued</label><input id="loanDate" type="date"/>
+    <label>Due Date (optional)</label><input id="loanDue" type="date"/>
+    <label>Note (optional)</label><input id="loanNote" placeholder="e.g. For school fees"/>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('loanModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLoan()">Save Loan</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="repayModal">
+  <div class="modal">
+    <h3>Record Repayment</h3>
+    <div id="repayInfo" style="margin-bottom:12px;font-size:0.84rem;color:var(--muted);"></div>
+    <label>Repayment Amount (UGX)</label><input id="repayAmount" type="number" placeholder="Amount received"/>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('repayModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRepayment()">Record</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="setSavingsModal">
+  <div class="modal">
+    <h3>Set All Savings Rate</h3>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">This sets everyone's <strong>weekly savings rate</strong>. The pool accumulates based on actual paid weeks per member.</div>
+    <label>Amount Per Member Per Week (UGX)</label><input id="bulkSavingsAmt" type="number" placeholder="e.g. 5000"/>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('setSavingsModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="applyBulkSavings()">Apply to All</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEFER PAYOUT MODAL -->
+<div class="overlay" id="deferModal">
+  <div class="modal">
+    <h3>💛 Record Deferred Payout</h3>
+    <div id="deferInfo" style="background:var(--accent2-light);border-radius:8px;padding:12px;margin-bottom:14px;font-size:0.84rem;color:#7a5000;"></div>
+    <label>Payout Amount Being Saved (UGX)</label>
+    <input id="deferAmount" type="number" placeholder="Enter payout amount"/>
+    <label>Date</label>
+    <input id="deferDate" type="date"/>
+    <label>Note (optional)</label>
+    <input id="deferNote" placeholder="e.g. Wants to save for end-of-year"/>
+    <div style="font-size:0.78rem;color:var(--muted);margin-top:-4px;margin-bottom:10px;">This amount will be added to the member's savings record and to the group savings pool.</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('deferModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveDeferral()">✓ Record Deferral</button>
     </div>
   </div>
 </div>
@@ -50,668 +399,549 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ══════════════════════════════
-   API LAYER — swap these out for real endpoints
-══════════════════════════════ */
-const API = {
-  BASE_URL: '/api/v1', // replace with your backend URL
+let state = {
+  groupName:'',members:[],columns:[],payments:{},
+  savings:{},payoutOrder:[],loans:[],deferredPayouts:[]
+};
+let editingMemberId=null,repayingLoanId=null,nextMid=1,nextCid=1,nextLid=1,nextDid=1;
+let currentPayoutWeekIdx=null, currentPayoutRecipientId=null, currentPayoutAmount=0;
 
-  async getListings(category, universityKey, campusKey) {
-    // Stub: returns local data. Replace with fetch() call:
-    // const res = await fetch(`${this.BASE_URL}/listings?category=${category}&uni=${universityKey}&campus=${campusKey}`);
-    // return await res.json();
-    return null; // signals to use local data
-  },
+/* ── Persistence ── */
+function save(){
+  try{localStorage.setItem('sacco_v4',JSON.stringify({state,nextMid,nextCid,nextLid,nextDid}));}catch(e){}
+}
+function load(){
+  try{
+    const d=localStorage.getItem('sacco_v4');
+    if(d){const p=JSON.parse(d);state=p.state;nextMid=p.nextMid||1;nextCid=p.nextCid||1;nextLid=p.nextLid||1;nextDid=p.nextDid||1;}
+  }catch(e){}
+  if(!state.savings)state.savings={};
+  if(!state.payoutOrder)state.payoutOrder=[];
+  if(!state.loans)state.loans=[];
+  if(!state.deferredPayouts)state.deferredPayouts=[];
+}
 
-  async getStats(universityKey, campusKey) {
-    // const res = await fetch(`${this.BASE_URL}/stats?uni=${universityKey}&campus=${campusKey}`);
-    // return await res.json();
-    return null;
-  },
+function fmt(n){return Number(n||0).toLocaleString('en-UG');}
+function esc(s){return String(s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
 
-  async submitProvider(formData) {
-    // const res = await fetch(`${this.BASE_URL}/providers/apply`, { method:'POST', body: JSON.stringify(formData), headers:{'Content-Type':'application/json'} });
-    // return await res.json();
-    return { success: true }; // stub
-  },
-
-  async getBubbleCounts(universityKey, campusKey) {
-    // const res = await fetch(`${this.BASE_URL}/counts?uni=${universityKey}&campus=${campusKey}`);
-    // return await res.json();
-    return null;
+function getP(mid,cid){
+  if(!state.payments[mid])state.payments[mid]={};
+  if(!state.payments[mid][cid]){
+    const col=state.columns.find(c=>c.id===cid);
+    state.payments[mid][cid]={paid:false,amount:col?col.defaultAmount:0};
   }
-};
+  return state.payments[mid][cid];
+}
+function getSavingsRate(mid){return parseFloat(state.savings[mid]||0);}
 
-/* ══════════════════════════════
-   MENU DATA
-══════════════════════════════ */
-const MENUS = {
-  breakfast:[
-    {emoji:'🍳',name:'Eggs & Chapati',desc:'Two fried eggs with fresh soft chapati',price:'UGX 2,500',badge:'mi-pop',badgeText:'Popular'},
-    {emoji:'🥛',name:'Porridge & Groundnuts',desc:'Hot sorghum porridge with g-nut paste',price:'UGX 1,500',badge:'mi-veg',badgeText:'Veg'},
-    {emoji:'🍞',name:'Bread & Tea',desc:'White bread with milk tea',price:'UGX 1,000',badge:'',badgeText:''},
-    {emoji:'🍌',name:'Fruit Salad',desc:'Seasonal fruits — banana, mango, pineapple',price:'UGX 2,000',badge:'mi-new',badgeText:'New'},
-  ],
-  lunch:[
-    {emoji:'🍲',name:'Beans & Rice',desc:'Stewed red kidney beans with steamed rice',price:'UGX 3,000',badge:'mi-pop',badgeText:'Popular'},
-    {emoji:'🍖',name:'Rolex Special',desc:'Eggs & veg rolled in chapati — Ugandan classic',price:'UGX 3,500',badge:'mi-pop',badgeText:'Popular'},
-    {emoji:'🥬',name:'Matoke & Groundnut Sauce',desc:'Steamed green banana with g-nut sauce',price:'UGX 3,000',badge:'mi-veg',badgeText:'Veg'},
-    {emoji:'🍗',name:'Chicken & Chips',desc:'Quarter chicken with golden fries',price:'UGX 8,000',badge:'mi-new',badgeText:'New'},
-    {emoji:'🍜',name:'Posho & Stew',desc:'Maize meal with mixed meat stew',price:'UGX 2,500',badge:'',badgeText:''},
-  ],
-  dinner:[
-    {emoji:'🍽️',name:'Full Dinner Plate',desc:'Rice, matoke, beans & meat of the day',price:'UGX 5,000',badge:'mi-pop',badgeText:'Popular'},
-    {emoji:'🐟',name:'Tilapia & Rice',desc:'Fried Nile perch with steamed rice',price:'UGX 9,000',badge:'mi-new',badgeText:'New'},
-    {emoji:'🥩',name:'Goat Luwombo',desc:'Slow-steamed goat in banana leaves',price:'UGX 12,000',badge:'mi-pop',badgeText:'Popular'},
-    {emoji:'🥗',name:'Vegetable Stew Plate',desc:'Seasonal veg stew with posho & rice',price:'UGX 3,500',badge:'mi-veg',badgeText:'Veg'},
-  ],
-  snacks:[
-    {emoji:'🍟',name:'Chips Ketchup',desc:'Salted golden fries with tomato sauce',price:'UGX 2,000',badge:'mi-pop',badgeText:'Popular'},
-    {emoji:'🥜',name:'Roasted Groundnuts',desc:'Fresh roasted peanuts — campus classic',price:'UGX 500',badge:'mi-veg',badgeText:'Veg'},
-    {emoji:'🌽',name:'Roasted Maize',desc:'Charcoal-grilled sweet corn',price:'UGX 500',badge:'mi-veg',badgeText:'Veg'},
-    {emoji:'🥐',name:'Samosa (3 pcs)',desc:'Crispy beef or vegetable samosa',price:'UGX 1,500',badge:'mi-new',badgeText:'New'},
-  ],
-  drinks:[
-    {emoji:'☕',name:'Milk Tea',desc:'Strong black tea with fresh milk',price:'UGX 800',badge:'mi-pop',badgeText:'Popular'},
-    {emoji:'🥤',name:'Fresh Juice',desc:'Passion, mango or pineapple blend',price:'UGX 2,500',badge:'mi-veg',badgeText:'Veg'},
-    {emoji:'🍶',name:'Millet Porridge',desc:'Thin millet drink, warm or chilled',price:'UGX 1,000',badge:'',badgeText:''},
-    {emoji:'💧',name:'Mineral Water',desc:'500ml chilled bottled water',price:'UGX 1,500',badge:'',badgeText:''},
-  ],
-};
+/* ── Accumulated savings for a member = rate × number of paid columns ── */
+function getAccumulatedSavings(mid){
+  const rate=getSavingsRate(mid);
+  if(!rate) return 0;
+  const paidWeeks=state.columns.filter(c=>getP(mid,c.id).paid).length;
+  return rate*paidWeeks;
+}
 
-/* ══════════════════════════════
-   BUBBLE DEFINITIONS
-   Each bubble is API-ready: endpoint + category + apiKey fields
-   for when you wire up the backend
-══════════════════════════════ */
-const BUBBLE_DEFS = [
-  {
-    cls:'cb-navy', icon:'🏠', label:'Hostels', page:'pg-hostels',
-    apiEndpoint:'/listings/hostels', apiCategory:'accommodation',
-    defaultCount:'340+ listed', badge:null,
-    countId:'bc-hostels'
-  },
-  {
-    cls:'cb-maroon', icon:'🍽️', label:'Restaurants', page:'pg-restaurants',
-    apiEndpoint:'/listings/restaurants', apiCategory:'food',
-    defaultCount:'180+ listed', badge:'Hot',
-    countId:'bc-restaurants'
-  },
-  {
-    cls:'cb-green', icon:'🗺️', label:'Campus Map', page:'pg-map',
-    apiEndpoint:'/maps/campus', apiCategory:'map',
-    defaultCount:'Full Map', badge:null,
-    countId:'bc-map'
-  },
-  {
-    cls:'cb-gold', icon:'🔧', label:'Mechanics', page:'pg-mechanics',
-    apiEndpoint:'/listings/mechanics', apiCategory:'mechanics',
-    defaultCount:'Nearby', badge:null,
-    countId:'bc-mechanics'
-  },
-  {
-    cls:'cb-teal', icon:'🪛', label:'Plumbers', page:'pg-plumbers',
-    apiEndpoint:'/listings/plumbers', apiCategory:'plumbers',
-    defaultCount:'Nearby', badge:null,
-    countId:'bc-plumbers'
-  },
-  {
-    cls:'cb-purple', icon:'🪚', label:'Carpenters', page:'pg-carpenters',
-    apiEndpoint:'/listings/carpenters', apiCategory:'carpenters',
-    defaultCount:'Nearby', badge:null,
-    countId:'bc-carpenters'
-  },
-  {
-    cls:'cb-rust', icon:'⚡', label:'Electricians', page:'pg-electricians',
-    apiEndpoint:'/listings/electricians', apiCategory:'electricians',
-    defaultCount:'Nearby', badge:null,
-    countId:'bc-electricians'
-  },
-  {
-    cls:'cb-lime', icon:'💊', label:'Pharmacy', page:'pg-pharmacy',
-    apiEndpoint:'/listings/pharmacy', apiCategory:'health',
-    defaultCount:'Near Campus', badge:'24/7',
-    countId:'bc-pharmacy'
-  },
-  {
-    cls:'cb-rose', icon:'📦', label:'More', page:'pg-more',
-    apiEndpoint:'/listings/misc', apiCategory:'misc',
-    defaultCount:'200+ options', badge:null,
-    countId:'bc-more'
-  },
-];
+/* ── Total deferred payouts for a member ── */
+function getMemberDeferred(mid){
+  return state.deferredPayouts.filter(d=>d.memberId===mid).reduce((s,d)=>s+d.amount,0);
+}
 
-/* ══════════════════════════════
-   UNIVERSITY DATA
-══════════════════════════════ */
-const UNIVERSITIES = [
-  {key:'ucu',name:'Uganda Christian University',short:'UCU',icon:'✝️',iconBg:'linear-gradient(135deg,#0A1F5C,#1a3a9f)',tag:'uc-tag-blue',tagText:'Mukono',location:'Mukono & 3 other campuses',theme:{primary:'#0A1F5C',secondary:'#1a3a9f',accent:'#F5C518'},
-    campuses:{
-      mukono:{name:'Mukono (Main)',loc:'Mukono, Central Region',icon:'🏫',stats:{hostels:'340+',restaurants:'180+',providers:'500+'},
-        hostels:[{name:'Sunrise Student Hostel',rating:'4.8',dist:'0.3km from gate',type:'Singles & Doubles',badge:'Verified',badgeClass:'badge-green',price:'UGX 180,000',icon:'🏠',iconBg:'#dbeafe'},{name:'Green Valley Residence',rating:'4.6',dist:'0.8km',type:'Self-contained',badge:'Popular',badgeClass:'badge-gold',price:'UGX 250,000',icon:'🏡',iconBg:'#dcfce7'},{name:'CampusNest Apartments',rating:'4.9',dist:'0.1km',type:'Studio Rooms',badge:'New',badgeClass:'badge-navy',price:'UGX 350,000',icon:'🏢',iconBg:'#fef9c3'},{name:'Mukono Heights Hostel',rating:'4.5',dist:'1.2km',type:'Doubles',badge:'Available',badgeClass:'badge-green',price:'UGX 140,000',icon:'🏘️',iconBg:'#fce7f3'},{name:'Faith Gardens Hostel',rating:'4.7',dist:'0.5km',type:'Self-contained',badge:'Top Rated',badgeClass:'badge-gold',price:'UGX 300,000',icon:'🌿',iconBg:'#ede9fe'}],
-        restaurants:[{name:'The UCU Main Canteen',rating:'4.9',dist:'On Campus',hours:'7am–8pm',badge:'Open Now',badgeClass:'badge-green',price:'From UGX 3,000',unit:'meal',icon:'🍲',iconBg:'#fef9c3'},{name:'Roast & Study Café',rating:'4.7',dist:'0.4km',hours:'7am–10pm',badge:'Student Fav',badgeClass:'badge-gold',price:'From UGX 2,500',unit:'item',icon:'☕',iconBg:'#dcfce7'},{name:"Mama's Kitchen Mukono",rating:'4.8',dist:'0.6km',hours:'11am–9pm',badge:'Open Now',badgeClass:'badge-green',price:'From UGX 5,000',unit:'meal',icon:'🍖',iconBg:'#fce7f3'},{name:'Fresh & Fit Eatery',rating:'4.6',dist:'0.3km',hours:'8am–7pm',badge:'Healthy',badgeClass:'badge-navy',price:'From UGX 6,000',unit:'meal',icon:'🥗',iconBg:'#dbeafe'}],
-        mechanics:[{name:'Quick Fix Auto — Mukono',rating:'4.8',dist:'1.2km',phone:'0772 123 456',badge:'Certified',badgeClass:'badge-green',price:'From UGX 20,000',icon:'🔧',iconBg:'#fef9c3'},{name:'Boda Boda Masters',rating:'4.6',dist:'0.8km',phone:'0701 234 567',badge:'Popular',badgeClass:'badge-gold',price:'From UGX 15,000',icon:'⚙️',iconBg:'#fef9c3'}],
-        plumbers:[{name:'FlowRight Plumbing',rating:'4.7',dist:'0.9km',phone:'0712 456 789',badge:'Emergency',badgeClass:'badge-red',price:'From UGX 30,000',icon:'🪛',iconBg:'#cffafe'},{name:'Mukono Pipe Masters',rating:'4.5',dist:'1.5km',phone:'0784 567 890',badge:'Certified',badgeClass:'badge-green',price:'From UGX 25,000',icon:'💧',iconBg:'#e0f2fe'}],
-        carpenters:[{name:'CraftWood Studios',rating:'4.9',dist:'2.1km',phone:'0756 678 901',badge:'Custom Work',badgeClass:'badge-gold',price:'From UGX 50,000',icon:'🪚',iconBg:'#ede9fe'}],
-        electricians:[{name:'PowerUp Electricals',rating:'4.8',dist:'1.0km',phone:'0772 890 123',badge:'Licensed',badgeClass:'badge-green',price:'From UGX 40,000',icon:'⚡',iconBg:'#ffedd5'},{name:'Bright Sparks Mukono',rating:'4.6',dist:'1.4km',phone:'0784 901 234',badge:'Solar Expert',badgeClass:'badge-gold',price:'From UGX 35,000',icon:'🔌',iconBg:'#fff7ed'}],
-        mapTitle:'UCU Mukono Campus Map',mapDesc:'Navigate UCU Mukono — blocks, hostels, cafeterias and key facilities.',mapKeyTitle:'Key Locations — Mukono',
-        mapKeys:[{icon:'📚',title:'Hamu Mukasa Library',desc:'7am to 10pm weekdays'},{icon:'⛪',title:'UCU Chapel',desc:'Daily services and weekly fellowships'},{icon:'🏢',title:'Administration Block',desc:'Registrar, Finance, Student Affairs'},{icon:'🏠',title:'Student Hostels A, B, C',desc:'Female and male sections'},{icon:'🍽️',title:'Main Canteen',desc:'Breakfast, lunch and supper'}]},
-      kampala:{name:'Kampala Campus',loc:'Kampala City',icon:'🏙️',stats:{hostels:'120+',restaurants:'90+',providers:'200+'},
-        hostels:[{name:'City View Student Flats',rating:'4.7',dist:'0.2km',type:'Studio & Doubles',badge:'Verified',badgeClass:'badge-green',price:'UGX 400,000',icon:'🏙️',iconBg:'#dbeafe'},{name:'Nakasero Residence',rating:'4.5',dist:'0.5km',type:'Self-contained',badge:'Popular',badgeClass:'badge-gold',price:'UGX 350,000',icon:'🏢',iconBg:'#fef9c3'}],
-        restaurants:[{name:'UCU Kampala Cafeteria',rating:'4.8',dist:'On Campus',hours:'7am–7pm',badge:'Open Now',badgeClass:'badge-green',price:'From UGX 4,000',unit:'meal',icon:'🍲',iconBg:'#fef9c3'},{name:'Urban Bites Kampala',rating:'4.6',dist:'0.3km',hours:'8am–10pm',badge:'Trendy',badgeClass:'badge-navy',price:'From UGX 8,000',unit:'meal',icon:'🥙',iconBg:'#fce7f3'}],
-        mechanics:[{name:'Kampala Quick Garage',rating:'4.6',dist:'0.6km',phone:'0772 111 222',badge:'Certified',badgeClass:'badge-green',price:'From UGX 25,000',icon:'🔧',iconBg:'#fef9c3'}],
-        plumbers:[{name:'Kampala PlumbPro',rating:'4.6',dist:'0.7km',phone:'0712 555 666',badge:'Emergency',badgeClass:'badge-red',price:'From UGX 35,000',icon:'🪛',iconBg:'#cffafe'}],
-        carpenters:[{name:'City Wood Craft',rating:'4.7',dist:'1.5km',phone:'0756 777 888',badge:'Custom Work',badgeClass:'badge-gold',price:'From UGX 60,000',icon:'🪚',iconBg:'#ede9fe'}],
-        electricians:[{name:'Kampala Electrical Solutions',rating:'4.8',dist:'0.8km',phone:'0784 999 000',badge:'Licensed',badgeClass:'badge-green',price:'From UGX 45,000',icon:'⚡',iconBg:'#ffedd5'}],
-        mapTitle:'UCU Kampala Campus Map',mapDesc:'Navigate the UCU city-centre campus in Kampala.',mapKeyTitle:'Key Locations — Kampala',
-        mapKeys:[{icon:'📚',title:'Campus Library',desc:'8am to 9pm weekdays'},{icon:'⛪',title:'Campus Chapel',desc:'Weekly services'},{icon:'🏢',title:'Admin Block',desc:'Student services'},{icon:'🍽️',title:'Campus Cafeteria',desc:'Breakfast, lunch and dinner'}]}
-    }
-  },
-  {key:'mak',name:'Makerere University',short:'MAK',icon:'🦅',iconBg:'linear-gradient(135deg,#1a5c1a,#2a8a2a)',tag:'uc-tag-green',tagText:'Kampala',location:'Kampala (Main) • Jinja',theme:{primary:'#1f5f2a',secondary:'#2f8a3d',accent:'#f4d35e'},
-    campuses:{
-      kampala:{name:'Main Campus — Kampala',loc:'Kampala, Central Region',icon:'🏛️',stats:{hostels:'280+',restaurants:'150+',providers:'420+'},
-        hostels:[{name:'Mitchell Hall',rating:'4.7',dist:'On Campus',type:'Shared',badge:'Official',badgeClass:'badge-green',price:'UGX 200,000',icon:'🏛️',iconBg:'#dcfce7'},{name:'University Hall',rating:'4.5',dist:'On Campus',type:'Singles & Shared',badge:'Available',badgeClass:'badge-gold',price:'UGX 180,000',icon:'🏠',iconBg:'#dbeafe'}],
-        restaurants:[{name:'Main Hall Cafeteria',rating:'4.8',dist:'On Campus',hours:'6am–9pm',badge:'Open Now',badgeClass:'badge-green',price:'From UGX 3,500',unit:'meal',icon:'🍲',iconBg:'#fef9c3'},{name:'Makerere Food Court',rating:'4.6',dist:'0.2km',hours:'8am–10pm',badge:'Popular',badgeClass:'badge-gold',price:'From UGX 4,000',unit:'meal',icon:'🥘',iconBg:'#fce7f3'}],
-        mechanics:[{name:'Wandegeya Auto Services',rating:'4.7',dist:'0.5km',phone:'0772 400 500',badge:'Certified',badgeClass:'badge-green',price:'From UGX 20,000',icon:'🔧',iconBg:'#fef9c3'}],
-        plumbers:[{name:'Kampala City Plumbers',rating:'4.6',dist:'0.8km',phone:'0712 800 900',badge:'Emergency',badgeClass:'badge-red',price:'From UGX 32,000',icon:'🪛',iconBg:'#cffafe'}],
-        carpenters:[{name:'Makerere Wood Studio',rating:'4.8',dist:'1.2km',phone:'0756 100 200',badge:'Custom',badgeClass:'badge-gold',price:'From UGX 55,000',icon:'🪚',iconBg:'#ede9fe'}],
-        electricians:[{name:'Wandegeya Electricals',rating:'4.7',dist:'0.6km',phone:'0784 300 400',badge:'Licensed',badgeClass:'badge-green',price:'From UGX 38,000',icon:'⚡',iconBg:'#ffedd5'}],
-        mapTitle:'Makerere University Campus Map',mapDesc:'Navigate Makerere Main Campus — Kampala Hill.',mapKeyTitle:'Key Locations — Makerere',
-        mapKeys:[{icon:'📚',title:'Main Library',desc:'7am to 11pm'},{icon:'🏛️',title:'Senate Building',desc:'Admin and governance'},{icon:'🏠',title:'Halls of Residence',desc:'Mitchell, University, Nsibirwa halls'},{icon:'🍽️',title:'Main Hall Cafeteria',desc:'6am to 9pm'}]}
-    }
-  },
-  {key:'mubs',name:'Makerere Univ. Business School',short:'MUBS',icon:'📊',iconBg:'linear-gradient(135deg,#8b1a1a,#c42020)',tag:'uc-tag-rose',tagText:'Nakawa',location:'Nakawa, Kampala',theme:{primary:'#7a1212',secondary:'#b81f1f',accent:'#f5c518'},
-    campuses:{
-      nakawa:{name:'Nakawa Campus',loc:'Nakawa, Kampala',icon:'🏢',stats:{hostels:'90+',restaurants:'70+',providers:'160+'},
-        hostels:[{name:'Nakawa Student Flats',rating:'4.5',dist:'0.4km',type:'Self-contained',badge:'Verified',badgeClass:'badge-green',price:'UGX 320,000',icon:'🏢',iconBg:'#dbeafe'},{name:'Business School Hostel',rating:'4.3',dist:'0.6km',type:'Singles',badge:'Available',badgeClass:'badge-gold',price:'UGX 250,000',icon:'🏠',iconBg:'#dcfce7'}],
-        restaurants:[{name:'MUBS Campus Cafeteria',rating:'4.7',dist:'On Campus',hours:'7am–8pm',badge:'Open Now',badgeClass:'badge-green',price:'From UGX 4,000',unit:'meal',icon:'🍲',iconBg:'#fef9c3'},{name:'Nakawa Food Strip',rating:'4.5',dist:'0.3km',hours:'8am–10pm',badge:'Popular',badgeClass:'badge-gold',price:'From UGX 3,500',unit:'meal',icon:'🥙',iconBg:'#fce7f3'}],
-        mechanics:[{name:'Nakawa Auto Centre',rating:'4.5',dist:'0.9km',phone:'0772 500 600',badge:'Certified',badgeClass:'badge-green',price:'From UGX 22,000',icon:'🔧',iconBg:'#fef9c3'}],
-        plumbers:[{name:'Nakawa Plumbing Co.',rating:'4.4',dist:'1.1km',phone:'0712 700 800',badge:'Certified',badgeClass:'badge-green',price:'From UGX 28,000',icon:'🪛',iconBg:'#cffafe'}],
-        carpenters:[{name:'Nakawa Woodwork',rating:'4.5',dist:'1.5km',phone:'0756 900 000',badge:'Custom',badgeClass:'badge-gold',price:'From UGX 48,000',icon:'🪚',iconBg:'#ede9fe'}],
-        electricians:[{name:'Nakawa Power Solutions',rating:'4.6',dist:'0.7km',phone:'0784 100 200',badge:'Licensed',badgeClass:'badge-green',price:'From UGX 35,000',icon:'⚡',iconBg:'#ffedd5'}],
-        mapTitle:'MUBS Nakawa Campus Map',mapDesc:'Navigate MUBS — Nakawa Campus, Kampala.',mapKeyTitle:'Key Locations — MUBS',
-        mapKeys:[{icon:'📚',title:'MUBS Library',desc:'8am to 9pm'},{icon:'🏢',title:'Main Administration',desc:'Registry and student services'},{icon:'🍽️',title:'Campus Cafeteria',desc:'Daily meals'}]}
-    }
-  },
-  {key:'kyam',name:'Kyambogo University',short:'KYU',icon:'⚙️',iconBg:'linear-gradient(135deg,#0e5c6b,#1a8fa8)',tag:'uc-tag-blue',tagText:'Kampala',location:'Kyambogo Hill, Kampala',theme:{primary:'#0e5c6b',secondary:'#1a8fa8',accent:'#ffd166'},
-    campuses:{
-      kyambogo:{name:'Kyambogo Main Campus',loc:'Kyambogo Hill, Kampala',icon:'🏗️',stats:{hostels:'110+',restaurants:'80+',providers:'180+'},
-        hostels:[{name:'Kyambogo Student Hall',rating:'4.4',dist:'On Campus',type:'Shared',badge:'Official',badgeClass:'badge-green',price:'UGX 160,000',icon:'🏗️',iconBg:'#dbeafe'},{name:'Kyambogo Hill Hostel',rating:'4.5',dist:'0.6km',type:'Singles',badge:'Popular',badgeClass:'badge-gold',price:'UGX 200,000',icon:'🏠',iconBg:'#dcfce7'}],
-        restaurants:[{name:'KYU Main Cafeteria',rating:'4.6',dist:'On Campus',hours:'7am–8pm',badge:'Open Now',badgeClass:'badge-green',price:'From UGX 3,000',unit:'meal',icon:'🍲',iconBg:'#fef9c3'}],
-        mechanics:[{name:'Kyambogo Auto Fix',rating:'4.5',dist:'0.8km',phone:'0772 600 700',badge:'Certified',badgeClass:'badge-green',price:'From UGX 18,000',icon:'🔧',iconBg:'#fef9c3'}],
-        plumbers:[{name:'Hill Plumbing Services',rating:'4.4',dist:'1.0km',phone:'0712 800 900',badge:'Certified',badgeClass:'badge-green',price:'From UGX 22,000',icon:'🪛',iconBg:'#cffafe'}],
-        carpenters:[{name:'KYU Wood Masters',rating:'4.5',dist:'1.8km',phone:'0756 000 111',badge:'Custom',badgeClass:'badge-gold',price:'From UGX 42,000',icon:'🪚',iconBg:'#ede9fe'}],
-        electricians:[{name:'Kyambogo Electricals',rating:'4.5',dist:'0.9km',phone:'0784 200 300',badge:'Licensed',badgeClass:'badge-green',price:'From UGX 32,000',icon:'⚡',iconBg:'#ffedd5'}],
-        mapTitle:'Kyambogo University Campus Map',mapDesc:'Navigate Kyambogo University on the eastern hills of Kampala.',mapKeyTitle:'Key Locations — Kyambogo',
-        mapKeys:[{icon:'📚',title:'KYU Library',desc:'8am to 9pm weekdays'},{icon:'🏗️',title:'Technology Block',desc:'Engineering and technical faculties'},{icon:'🏢',title:'Administration',desc:'Student services'},{icon:'🍽️',title:'Main Cafeteria',desc:'Daily meals'}]}
-    }
-  },
-  {key:'iuiu',name:'Islamic University in Uganda',short:'IUIU',icon:'☪️',iconBg:'linear-gradient(135deg,#145c30,#22884a)',tag:'uc-tag-green',tagText:'Mbale',location:'Mbale (Main) • Kampala',theme:{primary:'#145c30',secondary:'#22884a',accent:'#f7d154'},
-    campuses:{
-      mbale:{name:'Main Campus — Mbale',loc:'Mbale, Eastern Uganda',icon:'🕌',stats:{hostels:'100+',restaurants:'65+',providers:'150+'},
-        hostels:[{name:'IUIU Student Halls',rating:'4.6',dist:'On Campus',type:'Shared Rooms',badge:'Official',badgeClass:'badge-green',price:'UGX 140,000',icon:'🕌',iconBg:'#dcfce7'},{name:'Islamic University Lodge',rating:'4.5',dist:'0.3km',type:'Self-contained',badge:'Verified',badgeClass:'badge-gold',price:'UGX 200,000',icon:'🏠',iconBg:'#dbeafe'}],
-        restaurants:[{name:'IUIU Main Cafeteria',rating:'4.8',dist:'On Campus',hours:'6am–9pm',badge:'Open Now',badgeClass:'badge-green',price:'From UGX 3,000',unit:'meal',icon:'🍲',iconBg:'#fef9c3'},{name:'Mbale Halal Kitchen',rating:'4.7',dist:'0.4km',hours:'8am–9pm',badge:'Halal',badgeClass:'badge-navy',price:'From UGX 4,000',unit:'meal',icon:'🥘',iconBg:'#fce7f3'}],
-        mechanics:[{name:'IUIU Area Mechanics',rating:'4.5',dist:'1.0km',phone:'0772 700 800',badge:'Certified',badgeClass:'badge-green',price:'From UGX 15,000',icon:'🔧',iconBg:'#fef9c3'}],
-        plumbers:[{name:'Mbale Plumbing Services',rating:'4.4',dist:'1.2km',phone:'0712 900 000',badge:'Certified',badgeClass:'badge-green',price:'From UGX 20,000',icon:'🪛',iconBg:'#cffafe'}],
-        carpenters:[{name:'Mbale Craft Masters',rating:'4.5',dist:'2.0km',phone:'0756 111 222',badge:'Custom',badgeClass:'badge-gold',price:'From UGX 38,000',icon:'🪚',iconBg:'#ede9fe'}],
-        electricians:[{name:'IUIU Electricals',rating:'4.5',dist:'0.8km',phone:'0784 333 444',badge:'Licensed',badgeClass:'badge-green',price:'From UGX 28,000',icon:'⚡',iconBg:'#ffedd5'}],
-        mapTitle:'IUIU Mbale Campus Map',mapDesc:'Navigate the Islamic University in Uganda — Mbale Main Campus.',mapKeyTitle:'Key Locations — IUIU Mbale',
-        mapKeys:[{icon:'📚',title:'IUIU Library',desc:'8am to 10pm'},{icon:'🕌',title:'University Mosque',desc:"Daily prayers and Friday Jumu'ah"},{icon:'🏢',title:'Administration Block',desc:'Registry and student affairs'},{icon:'🍽️',title:'Main Cafeteria',desc:'Halal meals — three times daily'}]}
-    }
-  },
-];
+/* ── Grand total accumulated pool = sum of all members' accumulated savings + all deferred payouts ── */
+function getTotalPool(){
+  const weekSavings=state.members.reduce((s,m)=>s+getAccumulatedSavings(m.id),0);
+  const deferred=state.deferredPayouts.reduce((s,d)=>s+d.amount,0);
+  return weekSavings+deferred;
+}
 
-/* ══════════════════════════════
-   STATE
-══════════════════════════════ */
-let userName          = '';
-let selectedUniKey    = null;
-let selectedCampusKey = null;
-let currentUni        = null;
-let currentCampus     = null;
-let pageHistory       = ['pg-home'];
-// Cached card data for search/filter
-const listingsCache   = {};
+/* ── Weekly savings deduction (sum of all members' rate, used in payout calc) ── */
+function getWeeklyTotal(){
+  return state.members.reduce((s,m)=>s+getSavingsRate(m.id),0);
+}
 
-/* ══════════════════════════════
-   CLOUD AMBIENT LAYER
-══════════════════════════════ */
-function buildCloudLayer(){
-  const layer = document.getElementById('cloud-layer');
-  const palette = [
-    getComputedStyle(document.documentElement).getPropertyValue('--uni-primary').trim() || '#0A1F5C',
-    getComputedStyle(document.documentElement).getPropertyValue('--uni-accent').trim()  || '#F5C518',
-    '#22884a','#1a8fa8','#6b35b5','#d45d00'
-  ];
-  layer.innerHTML = '';
-  const blobs = [
-    {x:'-5%',  y:'5%',  w:'55%', h:'40%', c:palette[0], dur:'28s', delay:'0s'},
-    {x:'60%',  y:'10%', w:'50%', h:'35%', c:palette[1], dur:'34s', delay:'-10s'},
-    {x:'20%',  y:'55%', w:'45%', h:'38%', c:palette[2], dur:'40s', delay:'-18s'},
-    {x:'70%',  y:'60%', w:'40%', h:'30%', c:palette[3], dur:'26s', delay:'-6s'},
-    {x:'40%',  y:'30%', w:'35%', h:'28%', c:palette[4], dur:'36s', delay:'-22s'},
-    {x:'-8%',  y:'75%', w:'45%', h:'35%', c:palette[5], dur:'32s', delay:'-14s'},
-  ];
-  blobs.forEach(b => {
-    const el = document.createElement('div');
-    el.className = 'cloud-blob';
-    el.style.cssText = `left:${b.x};top:${b.y};width:${b.w};height:${b.h};background:${b.c};animation-duration:${b.dur};animation-delay:${b.delay}`;
-    layer.appendChild(el);
+/* ── Tab switching ── */
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    const names=['payments','savings','payout','loans'];
+    b.classList.toggle('active',names[i]===name);
   });
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='savings')renderSavings();
+  if(name==='payout')renderPayout();
+  if(name==='loans')renderLoans();
 }
 
 /* ══════════════════════════════
-   CLOUD BUBBLES GRID
+   PAYMENTS TABLE
 ══════════════════════════════ */
-function buildCloudBubbles(){
-  const grid = document.getElementById('cloud-bubbles-grid');
-  grid.innerHTML = BUBBLE_DEFS.map((def, i) => {
-    const count = currentCampus ? getBubbleCount(def, currentCampus) : def.defaultCount;
-    return `
-    <div class="cloud-bubble ${def.cls}" 
-         id="bubble-${i}"
-         onclick="goTo('${def.page}')"
-         role="button"
-         aria-label="${def.label}"
-         title="${def.label}"
-         data-api-endpoint="${def.apiEndpoint}"
-         data-api-category="${def.apiCategory}">
-      ${def.badge ? `<span class="cb-badge">${def.badge}</span>` : ''}
-      <span class="cb-icon">${def.icon}</span>
-      <span class="cb-label">${def.label}</span>
-      <span class="cb-count" id="${def.countId}">${count}</span>
+function renderTable(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const members=state.members.filter(m=>m.name.toLowerCase().includes(q));
+
+  let hHtml=`<th class="sticky-col">Member</th>`;
+  state.columns.forEach(c=>{
+    hHtml+=`<th style="text-align:center;">${esc(c.name)}<br>
+      <small>UGX ${fmt(c.defaultAmount)}</small>
+      <button onclick="removeColumn('${c.id}')" style="border:none;background:none;color:var(--danger);cursor:pointer;font-size:12px;margin-left:4px;">×</button>
+    </th>`;
+  });
+  hHtml+=`<th>Savings Rate/wk</th><th>Accumulated Savings</th><th>Paid to Date</th>`;
+  document.getElementById('headerRow').innerHTML=hHtml;
+
+  const body=document.getElementById('tableBody');
+  if(!members.length){
+    body.innerHTML=`<tr><td colspan="100" style="text-align:center;padding:40px;color:var(--muted);">No members yet. Add your first member above.</td></tr>`;
+    renderStats();updatePoolBanner();return;
+  }
+
+  body.innerHTML=members.map(m=>{
+    let rowTotal=0;
+    const cells=state.columns.map(c=>{
+      const p=getP(m.id,c.id);
+      if(p.paid)rowTotal+=p.amount;
+      const cbId=`cb_${m.id}_${c.id}`;
+      return `<td style="text-align:center;">
+        <input type="checkbox" class="pay-check" id="${cbId}" ${p.paid?'checked':''}
+          onchange="togglePaid('${m.id}','${c.id}',this.checked)">
+        <label class="check-label" for="${cbId}">
+          <div class="check-box">${p.paid?'<span style=\'color:#fff;font-weight:700;font-size:13px;\'>✓</span>':''}</div>
+        </label>
+        <input class="amt-input" type="number" value="${p.amount}"
+          onchange="setAmt('${m.id}','${c.id}',this.value)">
+      </td>`;
+    }).join('');
+    const rate=getSavingsRate(m.id);
+    const accum=getAccumulatedSavings(m.id);
+    return `<tr>
+      <td class="sticky-col">
+        <strong>${esc(m.name)}</strong><br>
+        <small style="color:var(--muted);">${esc(m.phone)}</small><br>
+        <div style="margin-top:4px;display:flex;gap:4px;">
+          <button class="btn-icon" onclick="openEditMember('${m.id}')">✏️</button>
+          <button class="btn-icon" onclick="removeMember('${m.id}')">🗑</button>
+        </div>
+      </td>
+      ${cells}
+      <td style="color:var(--accent2);font-weight:600;">UGX ${fmt(rate)}</td>
+      <td><span class="sav-accumulated">UGX ${fmt(accum)}</span></td>
+      <td style="color:var(--accent);font-weight:700;">UGX ${fmt(rowTotal)}</td>
+    </tr>`;
+  }).join('');
+  renderStats();updatePoolBanner();
+}
+
+function togglePaid(mid,cid,checked){
+  getP(mid,cid).paid=checked;
+  save();
+  renderTable();
+  // Pulse the banner to signal update
+  const banner=document.getElementById('poolBanner');
+  banner.classList.remove('pool-pulse');
+  void banner.offsetWidth;
+  banner.classList.add('pool-pulse');
+}
+function setAmt(mid,cid,val){getP(mid,cid).amount=parseFloat(val)||0;save();renderTable();}
+
+function renderStats(){
+  let total=0,unpaid=0;
+  state.members.forEach(m=>{
+    state.columns.forEach(c=>{
+      const p=getP(m.id,c.id);
+      if(p.paid)total+=p.amount; else unpaid++;
+    });
+  });
+  document.getElementById('statMembers').innerText=state.members.length;
+  document.getElementById('statTotal').innerText='UGX '+fmt(total);
+  document.getElementById('statWeeks').innerText=state.columns.length;
+  document.getElementById('statUnpaid').innerText=unpaid;
+}
+
+function updatePoolBanner(){
+  const pool=getTotalPool();
+  const weekly=getWeeklyTotal();
+  const deferred=state.deferredPayouts.reduce((s,d)=>s+d.amount,0);
+  document.getElementById('bannerPoolTotal').innerText='UGX '+fmt(pool);
+  document.getElementById('bannerWeekSavings').innerText='UGX '+fmt(weekly);
+  document.getElementById('bannerDeferred').innerText='UGX '+fmt(deferred);
+}
+
+/* ══════════════════════════════
+   SAVINGS TAB
+══════════════════════════════ */
+function renderSavings(){
+  let totalPool=0,count=0;
+  const rows=state.members.map(m=>{
+    const rate=getSavingsRate(m.id);
+    const accum=getAccumulatedSavings(m.id);
+    const deferred=getMemberDeferred(m.id);
+    const paidWeeks=state.columns.filter(c=>getP(m.id,c.id).paid).length;
+    if(rate>0){totalPool+=accum;count++;}
+    return `<div class="sav-row">
+      <div>
+        <strong>${esc(m.name)}</strong><br>
+        <small style="color:var(--muted);">${esc(m.phone)}</small><br>
+        <small style="color:var(--muted);">${paidWeeks} week(s) paid</small>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:0.72rem;color:var(--muted);">Rate/week:</span>
+        <input class="sav-input" type="number" value="${rate}" placeholder="0"
+          onchange="setSavings('${m.id}',this.value)" style="width:100px;">
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <span class="sav-accumulated">Pool: UGX ${fmt(accum)}</span>
+        ${deferred>0?`<span class="sav-deferred">+ Deferred: UGX ${fmt(deferred)}</span>`:''}
+        <small style="color:var(--muted);font-size:0.7rem;">Total: UGX ${fmt(accum+deferred)}</small>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('savingsRows').innerHTML=rows||`<p style="color:var(--muted);font-size:0.82rem;">Add members first.</p>`;
+
+  const totalDeferred=state.deferredPayouts.reduce((s,d)=>s+d.amount,0);
+  document.getElementById('statSavingsTotal').innerText='UGX '+fmt(totalPool+totalDeferred);
+  document.getElementById('statSavingsCount').innerText=count;
+  document.getElementById('statSavingsAvg').innerText=state.members.length?'UGX '+fmt(Math.round((totalPool+totalDeferred)/state.members.length)):'UGX 0';
+  document.getElementById('statDeferredTotal').innerText='UGX '+fmt(totalDeferred);
+
+  renderDeferredList();
+}
+
+function setSavings(mid,val){
+  state.savings[mid]=parseFloat(val)||0;
+  save();renderSavings();updatePoolBanner();
+}
+function setAllSavings(){openModal('setSavingsModal');}
+function applyBulkSavings(){
+  const amt=parseFloat(document.getElementById('bulkSavingsAmt').value)||0;
+  state.members.forEach(m=>{state.savings[m.id]=amt;});
+  closeModal('setSavingsModal');save();renderSavings();updatePoolBanner();toast('Savings rate updated for all members');
+}
+
+function renderDeferredList(){
+  const wrap=document.getElementById('deferredRows');
+  if(!state.deferredPayouts.length){
+    wrap.innerHTML=`<p style="color:var(--muted);font-size:0.82rem;">No deferred payouts recorded yet.</p>`;return;
+  }
+  wrap.innerHTML=state.deferredPayouts.map(d=>{
+    const m=state.members.find(x=>x.id===d.memberId);
+    const col=state.columns.find(x=>x.id===d.colId)||{name:'Week '+(d.weekIdx+1)};
+    return `<div class="deferred-row">
+      <div class="payout-num" style="background:var(--accent2);">💛</div>
+      <div style="flex:1">
+        <strong>${m?esc(m.name):'Unknown'}</strong>
+        <span class="deferred-badge" style="margin-left:8px;">${esc(col.name)}</span>
+        ${d.note?`<div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">${esc(d.note)}</div>`:''}
+      </div>
+      <div style="font-weight:700;color:var(--accent2);white-space:nowrap;">UGX ${fmt(d.amount)}</div>
+      <div style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">${d.date||''}</div>
+      <button class="btn btn-sm btn-danger" onclick="removeDeferred('${d.id}')">×</button>
     </div>`;
   }).join('');
 }
 
-function getBubbleCount(def, campus){
-  const map = {
-    'pg-hostels':      campus.stats.hostels + ' listed',
-    'pg-restaurants':  campus.stats.restaurants + ' listed',
-    'pg-map':          'Full Map',
-    'pg-mechanics':    campus.mechanics.length + ' providers',
-    'pg-plumbers':     campus.plumbers.length + ' providers',
-    'pg-carpenters':   campus.carpenters.length + ' providers',
-    'pg-electricians': campus.electricians.length + ' providers',
-    'pg-pharmacy':     'Near Campus',
-    'pg-more':         '200+ options',
-  };
-  return map[def.page] || def.defaultCount;
+function removeDeferred(id){
+  if(confirm('Remove this deferred payout record?')){
+    state.deferredPayouts=state.deferredPayouts.filter(d=>d.id!==id);
+    save();renderSavings();updatePoolBanner();toast('Record removed');
+  }
 }
 
-// API-ready: fetch live bubble counts and update DOM
-async function refreshBubbleCounts(){
-  if(!currentUni || !currentCampus) return;
-  try {
-    const data = await API.getBubbleCounts(currentUni.key, selectedCampusKey);
-    if(!data) return; // no backend yet, use local data
-    BUBBLE_DEFS.forEach(def => {
-      const el = document.getElementById(def.countId);
-      if(el && data[def.apiCategory]) el.textContent = data[def.apiCategory];
+/* ══════════════════════════════
+   PAYOUT TAB
+══════════════════════════════ */
+function renderPayout(){
+  const ids=state.members.map(m=>m.id);
+  state.payoutOrder=state.payoutOrder.filter(id=>ids.includes(id));
+  ids.forEach(id=>{if(!state.payoutOrder.includes(id))state.payoutOrder.push(id);});
+
+  const schedHtml=state.payoutOrder.map((id,i)=>{
+    const m=state.members.find(x=>x.id===id);
+    if(!m)return '';
+    const col=state.columns[i];
+    const deferred=getMemberDeferred(id);
+    return `<div class="payout-row">
+      <div class="payout-num">${i+1}</div>
+      <div style="flex:1"><strong>${esc(m.name)}</strong>
+        ${deferred>0?`<br><small style="color:var(--accent2);">Saved: UGX ${fmt(deferred)}</small>`:''}
+      </div>
+      <div style="color:var(--muted);font-size:0.78rem;">${col?esc(col.name):'Week '+(i+1)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('payoutSchedule').innerHTML=schedHtml||`<p style="color:var(--muted);font-size:0.82rem;">No members yet.</p>`;
+
+  const sel=document.getElementById('payoutWeekSelect');
+  sel.innerHTML=`<option value="">-- Choose Week --</option>`+state.columns.map((c,i)=>`<option value="${i}">${esc(c.name)}</option>`).join('');
+
+  const tbody=document.getElementById('orderTableBody');
+  tbody.innerHTML=state.payoutOrder.map((id,i)=>{
+    const m=state.members.find(x=>x.id===id);
+    if(!m)return '';
+    const deferred=getMemberDeferred(id);
+    return `<tr>
+      <td><span class="order-badge">${i+1}</span></td>
+      <td><strong>${esc(m.name)}</strong></td>
+      <td style="color:var(--muted);">${esc(m.phone)}</td>
+      <td>${deferred>0?`<span class="sav-deferred">UGX ${fmt(deferred)}</span>`:'<span style="color:var(--muted);font-size:0.78rem;">—</span>'}</td>
+      <td>
+        ${i>0?`<button class="btn btn-sm btn-blue" onclick="moveOrder('${id}',-1)">▲ Up</button> `:''}
+        ${i<state.payoutOrder.length-1?`<button class="btn btn-sm" style="background:var(--surface);" onclick="moveOrder('${id}',1)">▼ Down</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function moveOrder(id,dir){
+  const i=state.payoutOrder.indexOf(id);
+  if(i+dir<0||i+dir>=state.payoutOrder.length)return;
+  [state.payoutOrder[i],state.payoutOrder[i+dir]]=[state.payoutOrder[i+dir],state.payoutOrder[i]];
+  save();renderPayout();
+}
+function autoAssignOrder(){state.payoutOrder=state.members.map(m=>m.id);save();renderPayout();toast('Order assigned');}
+function clearOrder(){state.payoutOrder=[];save();renderPayout();}
+
+function calcPayout(){
+  const weekIdx=parseInt(document.getElementById('payoutWeekSelect').value);
+  const res=document.getElementById('payoutResult');
+  const deferWrap=document.getElementById('deferBtnWrap');
+  currentPayoutWeekIdx=null;
+  currentPayoutRecipientId=null;
+  currentPayoutAmount=0;
+  deferWrap.style.display='none';
+
+  if(isNaN(weekIdx)){res.innerHTML='<p style="color:var(--muted);">Select a week.</p>';return;}
+  const col=state.columns[weekIdx];
+  if(!col){res.innerHTML='<p style="color:var(--muted);">Week not found.</p>';return;}
+
+  let collected=0;
+  state.members.forEach(m=>{
+    const p=getP(m.id,col.id);
+    if(p.paid)collected+=p.amount;
+  });
+
+  const totalSavings=state.members.reduce((s,m)=>s+getSavingsRate(m.id),0);
+  const recipientId=state.payoutOrder[weekIdx];
+  const recipient=recipientId?state.members.find(m=>m.id===recipientId):null;
+  const recipSavings=recipient?getSavingsRate(recipient.id):0;
+
+  const poolAfterSavings=collected-totalSavings;
+  const recipPayout=poolAfterSavings-recipSavings;
+
+  // Check if already deferred
+  const alreadyDeferred=state.deferredPayouts.some(d=>d.colId===col.id&&d.memberId===recipientId);
+
+  currentPayoutWeekIdx=weekIdx;
+  currentPayoutRecipientId=recipientId;
+  currentPayoutAmount=Math.max(0,recipPayout);
+
+  res.innerHTML=`
+    <div style="display:grid;gap:8px;">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ece4;">
+        <span style="color:var(--muted);">Week</span><strong>${esc(col.name)}</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ece4;">
+        <span style="color:var(--muted);">Total collected</span><strong>UGX ${fmt(collected)}</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ece4;">
+        <span style="color:var(--muted);">Group savings deducted</span><span style="color:var(--accent2);">− UGX ${fmt(totalSavings)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ece4;">
+        <span style="color:var(--muted);">Recipient's own savings</span><span style="color:var(--accent2);">− UGX ${fmt(recipSavings)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;background:var(--accent-light);border-radius:8px;padding:10px 12px;margin-top:4px;">
+        <span style="font-weight:700;">Recipient: ${recipient?esc(recipient.name):'<em style=\'color:var(--muted);font-style:italic;\'>Not assigned</em>'}</span>
+        <strong style="color:var(--accent);font-size:1.05rem;">UGX ${fmt(Math.max(0,recipPayout))}</strong>
+      </div>
+      ${alreadyDeferred?'<div style="background:#fff3e0;border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--accent2);">⚠️ A deferral has already been recorded for this week for this recipient.</div>':''}
+    </div>`;
+
+  // Show defer button only if recipient is assigned and not already deferred
+  if(recipient && !alreadyDeferred){
+    deferWrap.style.display='block';
+  }
+}
+
+/* ── Deferred payout flow ── */
+function openDeferPayout(){
+  if(currentPayoutWeekIdx===null||!currentPayoutRecipientId)return;
+  const m=state.members.find(x=>x.id===currentPayoutRecipientId);
+  const col=state.columns[currentPayoutWeekIdx];
+  document.getElementById('deferInfo').innerHTML=
+    `<strong>${m?esc(m.name):'Unknown'}</strong> is saving their payout for <strong>${col?esc(col.name):'this week'}</strong> instead of receiving it.<br>
+     Calculated payout: <strong style="color:var(--accent);">UGX ${fmt(currentPayoutAmount)}</strong>`;
+  document.getElementById('deferAmount').value=currentPayoutAmount||'';
+  document.getElementById('deferDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('deferNote').value='';
+  openModal('deferModal');
+}
+
+function saveDeferral(){
+  const amt=parseFloat(document.getElementById('deferAmount').value)||0;
+  if(!amt)return alert('Enter the amount being saved.');
+  const col=state.columns[currentPayoutWeekIdx];
+  state.deferredPayouts.push({
+    id:'d'+nextDid++,
+    memberId:currentPayoutRecipientId,
+    colId:col?col.id:null,
+    weekIdx:currentPayoutWeekIdx,
+    amount:amt,
+    date:document.getElementById('deferDate').value,
+    note:document.getElementById('deferNote').value
+  });
+  closeModal('deferModal');save();
+  updatePoolBanner();
+  calcPayout(); // refresh calculator to show deferred notice
+  toast('Deferred payout recorded and added to savings pool');
+}
+
+/* ══════════════════════════════
+   LOANS TAB
+══════════════════════════════ */
+function renderLoans(){
+  const q=(document.getElementById('loanSearch')||{value:''}).value.toLowerCase();
+  const loans=state.loans.filter(l=>{
+    const m=state.members.find(x=>x.id===l.memberId);
+    return !q||(m&&m.name.toLowerCase().includes(q));
+  });
+  let loanTotal=0,outstanding=0,repaid=0,active=0;
+  state.loans.forEach(l=>{
+    loanTotal+=l.amount;
+    const bal=l.amount-(l.repaid||0);
+    outstanding+=bal;repaid+=(l.repaid||0);
+    if(bal>0)active++;
+  });
+  document.getElementById('statLoanTotal').innerText='UGX '+fmt(loanTotal);
+  document.getElementById('statLoanOutstanding').innerText='UGX '+fmt(outstanding);
+  document.getElementById('statLoanRepaid').innerText='UGX '+fmt(repaid);
+  document.getElementById('statLoanCount').innerText=active;
+
+  const body=document.getElementById('loansBody');
+  if(!loans.length){body.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted);">No loans recorded yet.</td></tr>`;return;}
+  body.innerHTML=loans.map(l=>{
+    const m=state.members.find(x=>x.id===l.memberId);
+    const balance=l.amount-(l.repaid||0);
+    let status,statusClass;
+    if(balance<=0){status='Repaid';statusClass='repaid';}
+    else if(l.repaid>0){status='Partial';statusClass='partial';}
+    else{status='Active';statusClass='active';}
+    return `<tr>
+      <td><strong>${m?esc(m.name):'Unknown'}</strong><br><small style="color:var(--muted);">${m?esc(m.phone):''}</small></td>
+      <td style="font-weight:700;">UGX ${fmt(l.amount)}</td>
+      <td>${l.date||'—'}</td><td>${l.due||'—'}</td>
+      <td style="color:var(--accent);">UGX ${fmt(l.repaid||0)}</td>
+      <td style="color:${balance>0?'var(--danger)':'var(--accent)'};font-weight:700;">UGX ${fmt(Math.max(0,balance))}</td>
+      <td><span class="loan-status ${statusClass}">${status}</span></td>
+      <td style="color:var(--muted);font-size:0.78rem;">${esc(l.note||'')}</td>
+      <td>
+        ${balance>0?`<button class="btn btn-sm btn-primary" onclick="openRepay('${l.id}')">Repay</button> `:''}
+        <button class="btn btn-sm btn-danger" onclick="removeLoan('${l.id}')">×</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openAddLoan(){
+  const sel=document.getElementById('loanMember');
+  sel.innerHTML=state.members.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('');
+  document.getElementById('loanAmount').value='';
+  document.getElementById('loanDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('loanDue').value='';
+  document.getElementById('loanNote').value='';
+  openModal('loanModal');
+}
+function saveLoan(){
+  const mid=document.getElementById('loanMember').value;
+  const amount=parseFloat(document.getElementById('loanAmount').value)||0;
+  if(!mid||!amount)return alert('Member and amount required.');
+  state.loans.push({id:'l'+nextLid++,memberId:mid,amount,date:document.getElementById('loanDate').value,due:document.getElementById('loanDue').value,note:document.getElementById('loanNote').value,repaid:0});
+  closeModal('loanModal');save();renderLoans();toast('Loan recorded');
+}
+function openRepay(lid){
+  repayingLoanId=lid;
+  const l=state.loans.find(x=>x.id===lid);
+  const m=state.members.find(x=>x.id===l.memberId);
+  const balance=l.amount-(l.repaid||0);
+  document.getElementById('repayInfo').innerHTML=`<strong>${m?esc(m.name):'Unknown'}</strong> — Outstanding: <strong style="color:var(--danger);">UGX ${fmt(balance)}</strong>`;
+  document.getElementById('repayAmount').value='';
+  openModal('repayModal');
+}
+function saveRepayment(){
+  const amt=parseFloat(document.getElementById('repayAmount').value)||0;
+  if(!amt)return alert('Enter an amount.');
+  const l=state.loans.find(x=>x.id===repayingLoanId);
+  l.repaid=(l.repaid||0)+amt;
+  closeModal('repayModal');save();renderLoans();toast('Repayment recorded');
+}
+function removeLoan(id){if(confirm('Remove this loan?')){state.loans=state.loans.filter(l=>l.id!==id);save();renderLoans();}}
+
+/* ── Members & Columns ── */
+function saveMember(){
+  const name=document.getElementById('memberName').value.trim();
+  const phone=document.getElementById('memberPhone').value.trim();
+  if(!name)return alert('Name is required.');
+  if(editingMemberId){
+    const m=state.members.find(x=>x.id===editingMemberId);m.name=name;m.phone=phone;
+  }else{
+    state.members.push({id:'m'+nextMid++,name,phone});
+  }
+  closeModal('memberModal');save();renderTable();toast('Member saved');
+}
+function saveColumn(){
+  const name=document.getElementById('colName').value.trim();
+  const amount=parseFloat(document.getElementById('colAmount').value)||0;
+  if(!name)return alert('Column name required.');
+  state.columns.push({id:'c'+nextCid++,name,defaultAmount:amount});
+  closeModal('columnModal');save();renderTable();
+}
+function generateWeeks(){
+  const startVal=document.getElementById('weekStart').value;
+  const count=parseInt(document.getElementById('weekCount').value)||1;
+  const amt=parseFloat(document.getElementById('weekAmount').value)||0;
+  if(!startVal)return alert('Select start date.');
+  let d=new Date(startVal);
+  for(let i=0;i<count;i++){
+    const label=`Wk ${i+1} (${d.toLocaleDateString('en-UG',{day:'2-digit',month:'short'})})`;
+    state.columns.push({id:'c'+nextCid++,name:label,defaultAmount:amt});
+    d.setDate(d.getDate()+7);
+  }
+  save();renderTable();toggleWeekStrip();toast('Weeks created');
+}
+
+function exportCSV(){
+  let csv='Name,Phone,Savings Rate/wk,Accumulated Savings,Deferred Payouts,'+state.columns.map(c=>c.name).join(',')+',Total Paid\n';
+  state.members.forEach(m=>{
+    let row=`${m.name},${m.phone},${getSavingsRate(m.id)},${getAccumulatedSavings(m.id)},${getMemberDeferred(m.id)}`;
+    let total=0;
+    state.columns.forEach(c=>{
+      const p=getP(m.id,c.id);
+      row+=`,${p.paid?p.amount:0}`;
+      if(p.paid)total+=p.amount;
     });
-  } catch(e) { /* silently fail — local data is fine */ }
-}
-
-/* ══════════════════════════════
-   STEP 0 — NAME
-══════════════════════════════ */
-const nameInput = document.getElementById('name-input');
-const nameBtn   = document.getElementById('name-btn');
-nameInput.addEventListener('input', () => {
-  const v = nameInput.value.trim();
-  nameBtn.style.opacity     = v ? '1' : '0.35';
-  nameBtn.style.pointerEvents = v ? 'all' : 'none';
-});
-nameInput.addEventListener('keydown', e => { if(e.key==='Enter') submitName(); });
-// Init name button state
-nameBtn.style.opacity = '0.35';
-nameBtn.style.pointerEvents = 'none';
-
-function submitName(){
-  const v = nameInput.value.trim();
-  if(!v) return;
-  userName = v;
-  buildUniGrid();
-  transition('screen-name','screen-uni');
-}
-
-/* ══════════════════════════════
-   STEP 1 — UNI PICKER
-══════════════════════════════ */
-function buildUniGrid(filter=''){
-  const grid = document.getElementById('uni-grid');
-  const q = filter.toLowerCase();
-  const filtered = UNIVERSITIES.filter(u =>
-    u.name.toLowerCase().includes(q) || u.short.toLowerCase().includes(q) || u.location.toLowerCase().includes(q)
-  );
-  grid.innerHTML = filtered.map(u => `
-    <div class="uni-card ${selectedUniKey===u.key?'selected':''}" data-key="${u.key}" onclick="pickUni('${u.key}')">
-      <div class="uc-logo" style="background:${u.iconBg}">${u.icon}</div>
-      <div class="uc-info"><div class="uc-name">${u.name}</div><div class="uc-detail">${u.location}</div></div>
-      <span class="uc-tag ${u.tag}">${u.tagText}</span>
-      <div class="uc-check">✓</div>
-    </div>`).join('') ||
-    `<div style="text-align:center;padding:28px;color:rgba(255,255,255,0.3);font-size:0.84rem">No results for "<strong>${filter}</strong>"</div>`;
-
-  // Restore uni btn state
-  const uniBtn = document.getElementById('uni-btn');
-  if(selectedUniKey) uniBtn.classList.add('ready');
-  else uniBtn.classList.remove('ready');
-}
-function filterUnis(v){ buildUniGrid(v); }
-
-function pickUni(key){
-  selectedUniKey = key;
-  document.querySelectorAll('.uni-card').forEach(c => c.classList.toggle('selected', c.dataset.key===key));
-  document.getElementById('uni-btn').classList.add('ready');
-}
-
-function goToCampusPicker(){
-  if(!selectedUniKey) return;
-  // Reset campus selection when re-picking uni
-  selectedCampusKey = null;
-  currentUni = UNIVERSITIES.find(u => u.key===selectedUniKey);
-  document.getElementById('campus-btn').classList.remove('ready');
-  const grid = document.getElementById('campus-grid');
-  grid.innerHTML = Object.entries(currentUni.campuses).map(([k,c]) => `
-    <div class="campus-option" data-key="${k}" onclick="pickCampus('${k}')">
-      <div class="co-icon">${c.icon}</div>
-      <div class="co-info"><div class="co-name">${c.name}</div><div class="co-detail">${c.loc} • ${c.stats.hostels} hostels • ${c.stats.restaurants} restaurants</div></div>
-      <div class="co-check">✓</div>
-    </div>`).join('');
-  document.getElementById('selected-uni-chip-name').textContent = currentUni.name;
-  document.getElementById('selected-uni-icon').textContent      = currentUni.icon;
-  const keys = Object.keys(currentUni.campuses);
-  if(keys.length === 1) pickCampus(keys[0]);
-  transition('screen-uni','screen-campus');
-}
-
-function backToUniPicker(){
-  transition('screen-campus','screen-uni');
-}
-
-/* ══════════════════════════════
-   STEP 2 — CAMPUS PICKER
-══════════════════════════════ */
-function pickCampus(key){
-  selectedCampusKey = key;
-  document.querySelectorAll('.campus-option').forEach(c => c.classList.toggle('selected', c.dataset.key===key));
-  document.getElementById('campus-btn').classList.add('ready');
-}
-
-function enterApp(){
-  if(!selectedCampusKey) return;
-  currentCampus = currentUni.campuses[selectedCampusKey];
-  applyToApp();
-  // Hide ALL step screens
-  document.querySelectorAll('.step-screen').forEach(s => s.classList.add('hidden'));
-  // Make sure home page is active
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('pg-home').classList.add('active');
-  pageHistory = ['pg-home'];
-  window.scrollTo(0,0);
-}
-
-// ── FIX: Switcher now correctly re-enters app ──
-function openSwitcher(){
-  // Show uni picker again (don't reset selection visuals)
-  buildUniGrid();
-  document.getElementById('screen-uni').classList.remove('hidden');
-}
-
-function transition(fromId, toId){
-  if(fromId) document.getElementById(fromId).classList.add('hidden');
-  if(toId)   setTimeout(()=>document.getElementById(toId).classList.remove('hidden'), 80);
-}
-
-/* ══════════════════════════════
-   APPLY DATA TO APP (called on enter + re-select)
-══════════════════════════════ */
-function applyToApp(){
-  const u = currentUni, c = currentCampus;
-  // Apply theme CSS vars
-  const theme = u.theme || {primary:'#0A1F5C',secondary:'#0d2870',accent:'#F5C518'};
-  document.documentElement.style.setProperty('--uni-primary',   theme.primary);
-  document.documentElement.style.setProperty('--uni-secondary', theme.secondary);
-  document.documentElement.style.setProperty('--uni-accent',    theme.accent);
-
-  // Rebuild ambient cloud layer with new theme colours
-  buildCloudLayer();
-
-  // Hero + nav
-  document.getElementById('cb-uni-name').textContent    = u.short;
-  document.getElementById('cb-campus-name').textContent = c.name;
-  document.getElementById('hero-name').textContent      = userName || 'there';
-  document.getElementById('nav-avatar-home').textContent= (userName||'?').charAt(0).toUpperCase();
-  document.getElementById('hero-tag').textContent       = `✦ ${u.name}`;
-  document.getElementById('hero-desc').textContent      = `Find hostels, restaurants, maps and services near ${c.name}.`;
-  document.getElementById('stat-hostels').textContent   = c.stats.hostels;
-  document.getElementById('stat-restaurants').textContent = c.stats.restaurants;
-  document.getElementById('stat-providers').textContent   = c.stats.providers;
-  document.getElementById('bubbles-sub').textContent    = `Services near ${c.name}`;
-  document.getElementById('pb-desc').textContent        = `List your service and reach students at ${c.name} — free to apply.`;
-
-  // Rebuild cloud bubbles with new campus data
-  buildCloudBubbles();
-
-  // Inner campus badges
-  ['hostels','restaurants','mechanics','plumbers','carpenters','electricians','more','provider','map','pharmacy'].forEach(p => {
-    const el = document.getElementById('inner-campus-'+p);
-    if(el) el.textContent = `${u.short} · ${c.name}`;
+    csv+=`${row},${total}\n`;
   });
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=window.URL.createObjectURL(blob);
+  const a=document.createElement('a');a.setAttribute('hidden','');a.setAttribute('href',url);a.setAttribute('download','sacco_report.csv');
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+function clearAll(){if(confirm('Delete ALL data? This cannot be undone.')){localStorage.removeItem('sacco_v4');location.reload();}}
+function openAddMember(){editingMemberId=null;document.getElementById('memberName').value='';document.getElementById('memberPhone').value='';document.getElementById('memberModalTitle').innerText='Add Member';openModal('memberModal');}
+function openEditMember(id){editingMemberId=id;const m=state.members.find(x=>x.id===id);document.getElementById('memberName').value=m.name;document.getElementById('memberPhone').value=m.phone||'';document.getElementById('memberModalTitle').innerText='Edit Member';openModal('memberModal');}
+function openAddColumn(){document.getElementById('colName').value='';document.getElementById('colAmount').value='';openModal('columnModal');}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function toggleWeekStrip(){const s=document.getElementById('weekStrip');s.style.display=s.style.display==='none'?'flex':'none';}
+function removeMember(id){if(confirm('Remove this member?')){state.members=state.members.filter(m=>m.id!==id);state.payoutOrder=state.payoutOrder.filter(x=>x!==id);save();renderTable();}}
+function removeColumn(id){if(confirm('Remove this column?')){state.columns=state.columns.filter(c=>c.id!==id);save();renderTable();}}
+let toastT;
+function toast(m){const t=document.getElementById('toast');t.innerText=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);}
 
-  // Map
-  document.getElementById('map-title').textContent     = c.mapTitle;
-  document.getElementById('map-desc').textContent      = c.mapDesc;
-  document.getElementById('map-key-title').textContent = c.mapKeyTitle;
-  document.getElementById('map-key-list').innerHTML    = c.mapKeys.map(k=>
-    `<div class="benefit-row"><div class="bi-icon">${k.icon}</div><div class="bi-text"><h4>${k.title}</h4><p>${k.desc}</p></div></div>`
-  ).join('');
-
-  // Render card listings (and cache for search)
-  listingsCache.hostels     = c.hostels;
-  listingsCache.restaurants = c.restaurants;
-  listingsCache.mechanics   = c.mechanics;
-  listingsCache.plumbers    = c.plumbers;
-  listingsCache.carpenters  = c.carpenters;
-  listingsCache.electricians= c.electricians;
-
-  renderHostels(c.hostels);
-  renderRestaurants(c.restaurants);
-  renderServiceList('mechanics-list',     c.mechanics);
-  renderServiceList('plumbers-list',      c.plumbers);
-  renderServiceList('carpenters-list',    c.carpenters);
-  renderServiceList('electricians-list',  c.electricians);
-
-  // Provider dropdowns
-  const uSel = document.getElementById('provider-uni-select');
-  uSel.innerHTML = '<option value="">Select university</option>' +
-    UNIVERSITIES.map(uni => `<option value="${uni.key}" ${uni.key===u.key?'selected':''}>${uni.name}</option>`).join('');
-  const cSel = document.getElementById('provider-campus-select');
-  cSel.innerHTML = '<option value="">Select campus</option>' +
-    Object.entries(u.campuses).map(([k,v]) => `<option value="${k}" ${k===selectedCampusKey?'selected':''}>${v.name}</option>`).join('');
-
-  // Menu
-  renderMenu('breakfast');
-
-  // Try to refresh counts from backend (no-op until backend is connected)
-  refreshBubbleCounts();
-}
-
-/* ══════════════════════════════
-   RENDER HELPERS
-══════════════════════════════ */
-function renderHostels(items){
-  document.getElementById('hostels-list').innerHTML = (items||[]).map(h=>`
-    <div class="card" onclick="showToast('Opening ${h.name}…')">
-      <div class="card-icon" style="background:${h.iconBg}">${h.icon}</div>
-      <div class="card-body"><h3>${h.name}</h3>
-        <div class="card-meta"><span>⭐ ${h.rating}</span><span>📍 ${h.dist}</span><span>🏠 ${h.type}</span></div>
-        <span class="badge ${h.badgeClass}">${h.badge}</span>
-        <div class="card-price">${h.price} <small>/month</small></div>
-      </div><button class="card-action">View</button>
-    </div>`).join('') || emptyState('hostel');
-}
-function renderRestaurants(items){
-  document.getElementById('restaurants-list').innerHTML = (items||[]).map(r=>`
-    <div class="card" onclick="showToast('Opening ${r.name}…')">
-      <div class="card-icon" style="background:${r.iconBg}">${r.icon}</div>
-      <div class="card-body"><h3>${r.name}</h3>
-        <div class="card-meta"><span>⭐ ${r.rating}</span><span>📍 ${r.dist}</span><span>🕐 ${r.hours}</span></div>
-        <span class="badge ${r.badgeClass}">${r.badge}</span>
-        <div class="card-price">${r.price} <small>/${r.unit}</small></div>
-      </div><button class="card-action">View</button>
-    </div>`).join('') || emptyState('restaurant');
-}
-function renderServiceList(id, items){
-  const el = document.getElementById(id);
-  if(!el) return;
-  if(!items || !items.length){
-    el.innerHTML = `<div class="empty-state"><div class="e-icon">🔍</div><p>No listings yet for this campus.<br>Be the first — <strong>become a provider!</strong></p></div>`;
-    return;
-  }
-  el.innerHTML = items.map(s=>`
-    <div class="card" onclick="showToast('Calling ${s.name}…')">
-      <div class="card-icon" style="background:${s.iconBg}">${s.icon}</div>
-      <div class="card-body"><h3>${s.name}</h3>
-        <div class="card-meta"><span>⭐ ${s.rating}</span><span>📍 ${s.dist}</span><span>📞 ${s.phone}</span></div>
-        <span class="badge ${s.badgeClass}">${s.badge}</span>
-        <div class="card-price">${s.price} <small>/job</small></div>
-      </div><button class="card-action">Call</button>
-    </div>`).join('');
-}
-function emptyState(type){
-  return `<div class="empty-state"><div class="e-icon">🔍</div><p>No ${type}s found.</p></div>`;
-}
-
-/* ══════════════════════════════
-   SEARCH & FILTER
-══════════════════════════════ */
-function filterCards(query, listId, type){
-  if(!currentCampus) return;
-  const q = query.toLowerCase().trim();
-  let source = [];
-  if(type==='hostel')      source = listingsCache.hostels     || [];
-  if(type==='restaurant')  source = listingsCache.restaurants || [];
-  if(type==='mechanic')    source = listingsCache.mechanics   || [];
-  if(type==='plumber')     source = listingsCache.plumbers    || [];
-  if(type==='carpenter')   source = listingsCache.carpenters  || [];
-  if(type==='electrician') source = listingsCache.electricians|| [];
-  const filtered = q ? source.filter(i => i.name.toLowerCase().includes(q)) : source;
-  if(type==='hostel')     renderHostels(filtered);
-  else if(type==='restaurant') renderRestaurants(filtered);
-  else renderServiceList(listId, filtered);
-}
-function filterByChip(chipEl, listId, type, value){
-  chipEl.closest('.chips').querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  chipEl.classList.add('active');
-  if(!currentCampus) return;
-  let source = [];
-  if(type==='hostel') source = listingsCache.hostels || [];
-  const filtered = value ? source.filter(i => (i.type||'').toLowerCase().includes(value.toLowerCase())) : source;
-  if(type==='hostel') renderHostels(filtered);
-}
-
-/* ══════════════════════════════
-   MENU
-══════════════════════════════ */
-function switchMenu(tab, el){
-  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
-  if(el) el.classList.add('active');
-  renderMenu(tab);
-}
-function renderMenu(tab){
-  const items = MENUS[tab] || [];
-  document.getElementById('menu-grid').innerHTML = items.map(i=>`
-    <div class="menu-item">
-      <div class="mi-emoji">${i.emoji}</div>
-      <div class="mi-body"><h4>${i.name}</h4><p>${i.desc}</p>${i.badge?`<span class="mi-badge ${i.badge}">${i.badgeText}</span>`:''}</div>
-      <div class="mi-price">${i.price}</div>
-    </div>`).join('');
-}
-
-/* ══════════════════════════════
-   NAVIGATION
-══════════════════════════════ */
-function goTo(pageId){
-  document.querySelector('.page.active').classList.remove('active');
-  document.getElementById(pageId).classList.add('active');
-  window.scrollTo(0,0);
-  pageHistory.push(pageId);
-}
-function goBack(){
-  pageHistory.pop();
-  const prev = pageHistory[pageHistory.length-1] || 'pg-home';
-  document.querySelector('.page.active').classList.remove('active');
-  document.getElementById(prev).classList.add('active');
-  window.scrollTo(0,0);
-}
-function closeSOS(e){
-  if(e.target === document.getElementById('sos-overlay'))
-    document.getElementById('sos-overlay').classList.remove('open');
-}
-function doSearch(){
-  const q = document.getElementById('home-search').value.toLowerCase().trim();
-  if(!q) return;
-  const map={hostel:'pg-hostels',accommodation:'pg-hostels',restaurant:'pg-restaurants',food:'pg-restaurants',canteen:'pg-restaurants',menu:'pg-restaurants',map:'pg-map',campus:'pg-map',mechanic:'pg-mechanics',car:'pg-mechanics',bike:'pg-mechanics',plumb:'pg-plumbers',water:'pg-plumbers',carpenter:'pg-carpenters',wood:'pg-carpenters',electric:'pg-electricians',power:'pg-electricians',pharmacy:'pg-pharmacy',medicine:'pg-pharmacy',drug:'pg-pharmacy',health:'pg-pharmacy',laundry:'pg-more',tutor:'pg-more',salon:'pg-more',print:'pg-more',provider:'pg-provider',list:'pg-provider'};
-  for(const [k,v] of Object.entries(map)){if(q.includes(k)){goTo(v);return;}}
-  showToast('Try: hostels, restaurants, pharmacy, map…');
-}
-document.getElementById('home-search').addEventListener('keydown', e=>{if(e.key==='Enter')doSearch();});
-
-/* ══════════════════════════════
-   PROVIDER FORM SUBMIT (API-ready)
-══════════════════════════════ */
-async function submitProviderForm(){
-  const formData = {
-    universityKey: selectedUniKey,
-    campusKey: selectedCampusKey,
-    timestamp: new Date().toISOString(),
-    // form fields would be collected here
-  };
-  try {
-    const result = await API.submitProvider(formData);
-    if(result.success){
-      showToast("✅ Application submitted! We'll be in touch within 24hrs.");
-    } else {
-      showToast('❌ Submission failed. Please try again.');
-    }
-  } catch(e) {
-    showToast("✅ Application submitted! We'll be in touch within 24hrs.");
-  }
-}
-
-/* ══════════════════════════════
-   TOAST
-══════════════════════════════ */
-let toastTimer;
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
-}
-
-/* ══════════════════════════════
-   CHIP INTERACTIONS
-══════════════════════════════ */
-document.querySelectorAll('.chips').forEach(group=>{
-  group.querySelectorAll('.chip').forEach(chip=>{
-    if(!chip.hasAttribute('onclick')){
-      chip.addEventListener('click',()=>{
-        group.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-        chip.classList.add('active');
-      });
-    }
-  });
-});
-
-/* ══════════════════════════════
-   INIT
-══════════════════════════════ */
-buildCloudLayer();
-buildCloudBubbles();
-renderMenu('breakfast');
+window.onload=()=>{
+  load();
+  document.getElementById('groupName').value=state.groupName||'';
+  document.getElementById('groupName').oninput=(e)=>{state.groupName=e.target.value;save();};
+  renderTable();
+};
 </script>
 </body>
 </html>
