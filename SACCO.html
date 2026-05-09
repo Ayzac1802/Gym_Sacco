@@ -4,36 +4,53 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>SACCO Payment Tracker</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SACCO App">
 <meta name="theme-color" content="#1a6b3c">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --bg:#f5f3ee;--surface:#ece9e2;--card:#ffffff;--border:#ddd9d0;
-  --accent:#1a6b3c;--accent-light:#e8f5ee;
-  --accent2:#c8860a;--accent2-light:#fef3e0;
-  --danger:#c0392b;--danger-light:#fdecea;
-  --blue:#1a5fb4;--blue-light:#e8f0fb;
-  --purple:#6b3ca8;--purple-light:#f0e8fb;
-  --text:#1a1a1a;--muted:#888074;
-  --paid-bg:#1a6b3c;--unpaid-bg:#e5e1d8;
-  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,.07);
-  --sticky-w:220px;
+  --bg: #f5f3ee;
+  --surface: #ece9e2;
+  --card: #ffffff;
+  --border: #ddd9d0;
+  --accent: #1a6b3c;
+  --accent-light: #e8f5ee;
+  --accent2: #c8860a;
+  --accent2-light: #fef3e0;
+  --danger: #c0392b;
+  --danger-light: #fdecea;
+  --blue: #1a5fb4;
+  --blue-light: #e8f0fb;
+  --purple: #6b3ca8;
+  --purple-light: #f0e8fb;
+  --text: #1a1a1a;
+  --muted: #888074;
+  --paid-bg: #1a6b3c;
+  --unpaid-bg: #e5e1d8;
+  --radius: 10px;
+  --shadow: 0 2px 12px rgba(0,0,0,.07);
+  --sticky-w: 220px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 18px;-webkit-tap-highlight-color:transparent;}
 
+/* ── TABS ── */
 .tab-nav{max-width:1400px;margin:0 auto 20px;display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:5px;}
 .tab-btn{flex:1;padding:10px 14px;border:none;background:transparent;border-radius:9px;font-family:inherit;font-size:0.83rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;}
 .tab-btn.active{background:var(--accent);color:#fff;}
 .tab-pane{display:none;}
 .tab-pane.active{display:block;}
 
+/* ── Header ── */
 .app-header{max-width:1400px;margin:0 auto 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
 .logo-area{display:flex;align-items:center;gap:14px;}
 .logo-icon{width:48px;height:48px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 12px rgba(26,107,60,.25);}
 .group-name-input{background:transparent;border:none;border-bottom:1.5px solid var(--border);color:var(--text);font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3vw,1.9rem);font-weight:700;outline:none;min-width:160px;max-width:300px;transition:border-color .2s;}
 .group-name-input:focus{border-color:var(--accent);}
 
+/* ── Stats ── */
 .stats-bar{max-width:1400px;margin:0 auto 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
@@ -44,21 +61,38 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .stat-card.purple::before{background:var(--purple);}
 .stat-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:5px;}
 .stat-value{font-size:1.25rem;font-weight:700;}
+.stat-value.green{color:var(--accent);}
 
+/* ── Toolbar ── */
 .toolbar{max-width:1400px;margin:0 auto 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+/* ── Week strip ── */
 .week-strip{max-width:1400px;margin:0 auto 16px;background:var(--accent-light);padding:14px;border-radius:10px;gap:14px;align-items:flex-end;flex-wrap:wrap;}
 .week-strip label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:3px;}
 .week-strip input{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;font-family:inherit;}
 
+/* ── Sticky Table ── */
 .table-outer{max-width:1400px;margin:0 auto 28px;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);background:var(--card);overflow:hidden;}
 .table-scroll{overflow-x:auto;max-width:100%;}
+
 table{width:max-content;min-width:100%;border-collapse:collapse;font-size:0.83rem;}
 th{padding:11px 13px;text-align:left;font-size:0.65rem;text-transform:uppercase;color:var(--muted);border-bottom:1.5px solid var(--border);background:var(--card);white-space:nowrap;}
 td{padding:9px 13px;border-bottom:1px solid #f0ece4;vertical-align:middle;white-space:nowrap;}
-th.sticky-col,td.sticky-col{position:sticky;left:0;z-index:2;background:var(--card);border-right:2px solid var(--border);min-width:var(--sticky-w);max-width:var(--sticky-w);white-space:normal;word-break:break-word;}
+
+/* Sticky first column */
+th.sticky-col, td.sticky-col{
+  position:sticky;left:0;z-index:2;
+  background:var(--card);
+  border-right:2px solid var(--border);
+  min-width:var(--sticky-w);
+  max-width:var(--sticky-w);
+  white-space:normal;
+  word-break:break-word;
+}
 th.sticky-col{z-index:3;}
 tr:hover td.sticky-col{background:#fafaf8;}
 
+/* ── Buttons ── */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:0.8rem;font-weight:600;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit;}
 .btn-primary{background:var(--accent);color:#fff;}
 .btn-primary:hover{background:#155c33;}
@@ -70,15 +104,21 @@ tr:hover td.sticky-col{background:#fafaf8;}
 .btn-sm{padding:4px 9px;font-size:0.72rem;}
 .btn-icon{padding:5px 8px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.8rem;}
 
+/* ── Checkboxes ── */
 .pay-check{display:none;}
 .check-box{width:24px;height:24px;border-radius:6px;border:2px solid var(--border);background:var(--unpaid-bg);display:flex;align-items:center;justify-content:center;transition:all .18s;cursor:pointer;}
 .pay-check:checked+.check-label .check-box{background:var(--paid-bg);border-color:var(--paid-bg);}
-.pay-check:checked+.check-label .check-box::after{content:'checkmark';color:#fff;font-size:13px;font-weight:700;}
+.pay-check:checked+.check-label .check-box::after{content:'✓';color:#fff;font-size:13px;font-weight:700;}
 .amt-input{width:80px;background:#f5f3ee;border:1px solid var(--border);border-radius:5px;font-size:0.73rem;padding:3px 6px;text-align:right;font-family:inherit;}
+
+/* ── Savings column ── */
 .sav-input{width:90px;background:#fffbf0;border:1px solid #e8d89a;border-radius:5px;font-size:0.73rem;padding:3px 6px;text-align:right;font-family:inherit;}
 
+/* ── Payout order ── */
 .order-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.75rem;font-weight:700;cursor:pointer;}
+.order-badge.unset{background:var(--surface);color:var(--muted);border:2px dashed var(--border);}
 
+/* ── Loans tab ── */
 .loans-header{max-width:1400px;margin:0 auto 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 .loans-table-wrap{max-width:1400px;margin:0 auto 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow-x:auto;}
 .loan-status{padding:3px 9px;border-radius:12px;font-size:0.7rem;font-weight:600;}
@@ -86,52 +126,42 @@ tr:hover td.sticky-col{background:#fafaf8;}
 .loan-status.repaid{background:var(--accent-light);color:var(--accent);}
 .loan-status.partial{background:var(--blue-light);color:var(--blue);}
 
+/* ── Savings summary ── */
 .savings-summary{max-width:1400px;margin:0 auto 20px;background:var(--card);border:1px solid #e8d89a;border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow);}
 .savings-summary h3{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;}
-.sav-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f5f0e0;font-size:0.83rem;gap:12px;flex-wrap:wrap;}
+.sav-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f5f0e0;font-size:0.83rem;}
 .sav-row:last-child{border-bottom:none;}
 
-/* Accumulated savings highlight */
-.sav-accumulated{background:var(--accent-light);border-radius:8px;padding:4px 10px;font-weight:700;color:var(--accent);font-size:0.82rem;}
-.sav-deferred{background:#fff3e0;border-radius:8px;padding:4px 10px;font-weight:700;color:var(--accent2);font-size:0.82rem;}
-
-/* Live pool banner */
-.pool-banner{max-width:1400px;margin:0 auto 16px;background:linear-gradient(135deg,#1a6b3c,#155c33);color:#fff;border-radius:12px;padding:18px 22px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;box-shadow:0 4px 16px rgba(26,107,60,0.25);}
-.pool-banner .pool-val{font-size:2rem;font-weight:700;font-family:'Playfair Display',serif;}
-.pool-banner .pool-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;opacity:0.7;margin-bottom:2px;}
-.pool-divider{width:1px;height:50px;background:rgba(255,255,255,0.2);}
-
+/* ── Payout panel ── */
 .payout-panel{max-width:1400px;margin:0 auto 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
 .payout-panel h3{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;}
 .payout-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f0ece4;font-size:0.84rem;}
 .payout-row:last-child{border-bottom:none;}
 .payout-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;}
 
-/* Deferred payout records */
-.deferred-list{max-width:1400px;margin:0 auto 20px;background:var(--card);border:1px solid #f0c060;border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow);}
-.deferred-list h3{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin-bottom:12px;}
-.deferred-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f5f0e0;font-size:0.83rem;flex-wrap:wrap;}
-.deferred-row:last-child{border-bottom:none;}
-.deferred-badge{background:#fff3e0;color:var(--accent2);border-radius:100px;padding:3px 10px;font-size:0.68rem;font-weight:700;}
-
+/* ── Modals ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);z-index:100;align-items:center;justify-content:center;padding:24px;}
 .overlay.open{display:flex;}
-.modal{background:var(--card);border-radius:14px;padding:26px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto;}
+.modal{background:var(--card);border-radius:14px;padding:26px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
 .modal h3{margin-bottom:16px;font-family:'Playfair Display',serif;}
-.modal input,.modal select,.modal textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.84rem;font-family:inherit;margin-bottom:10px;background:#fff;}
+.modal input,.modal select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.84rem;font-family:inherit;margin-bottom:10px;background:#fff;}
 .modal label{font-size:0.72rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:block;margin-bottom:4px;}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;}
 
+/* ── Toast ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#fff;border-radius:10px;padding:12px 20px;font-size:0.83rem;opacity:0;transition:.3s;z-index:200;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(-10px);}
+
+/* ── Search ── */
 .search-input{padding:8px 12px;border-radius:8px;border:1px solid var(--border);font-family:inherit;font-size:0.82rem;background:#fff;min-width:180px;}
+
+/* ── Loan summary cards ── */
 .loan-stats{max-width:1400px;margin:0 auto 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
 
-/* Savings pulse animation when payment toggled */
-@keyframes poolPulse{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
-.pool-pulse{animation:poolPulse 0.4s ease;}
-
-@media(max-width:600px){.toolbar{gap:6px;}.btn{padding:7px 11px;font-size:0.76rem;}.pool-divider{display:none;}}
+@media(max-width:600px){
+  .toolbar{gap:6px;}
+  .btn{padding:7px 11px;font-size:0.76rem;}
+}
 </style>
 </head>
 <body>
@@ -150,6 +180,7 @@ tr:hover td.sticky-col{background:#fafaf8;}
   </div>
 </header>
 
+<!-- Tab Navigation -->
 <div class="tab-nav">
   <button class="tab-btn active" onclick="switchTab('payments')">💳 Payments</button>
   <button class="tab-btn" onclick="switchTab('savings')">💰 Savings</button>
@@ -159,31 +190,11 @@ tr:hover td.sticky-col{background:#fafaf8;}
 
 <!-- ═══════════════ PAYMENTS TAB ═══════════════ -->
 <div id="tab-payments" class="tab-pane active">
-
-  <!-- Live Savings Pool Banner -->
-  <div class="pool-banner" id="poolBanner">
-    <div>
-      <div class="pool-label">Accumulated Savings Pool</div>
-      <div class="pool-val" id="bannerPoolTotal">UGX 0</div>
-      <div style="font-size:0.72rem;opacity:0.65;margin-top:2px;">Updates every time a payment is recorded</div>
-    </div>
-    <div class="pool-divider"></div>
-    <div>
-      <div class="pool-label">This Week's Deduction</div>
-      <div style="font-size:1.2rem;font-weight:700;" id="bannerWeekSavings">UGX 0</div>
-    </div>
-    <div class="pool-divider"></div>
-    <div>
-      <div class="pool-label">Deferred Payouts Saved</div>
-      <div style="font-size:1.2rem;font-weight:700;" id="bannerDeferred">UGX 0</div>
-    </div>
-  </div>
-
   <div class="stats-bar">
     <div class="stat-card green"><div class="stat-label">Members</div><div class="stat-value" id="statMembers">0</div></div>
     <div class="stat-card gold"><div class="stat-label">Collected</div><div class="stat-value" id="statTotal">UGX 0</div></div>
     <div class="stat-card blue"><div class="stat-label">Weeks</div><div class="stat-value" id="statWeeks">0</div></div>
-    <div class="stat-card red"><div class="stat-label">Unpaid Slots</div><div class="stat-value" id="statUnpaid">0</div></div>
+    <div class="stat-card red"><div class="stat-label">Unpaid</div><div class="stat-value" id="statUnpaid">0</div></div>
   </div>
 
   <div class="toolbar">
@@ -213,36 +224,32 @@ tr:hover td.sticky-col{background:#fafaf8;}
 <!-- ═══════════════ SAVINGS TAB ═══════════════ -->
 <div id="tab-savings" class="tab-pane">
   <div class="stats-bar">
-    <div class="stat-card gold"><div class="stat-label">Accumulated Pool</div><div class="stat-value" id="statSavingsTotal">UGX 0</div></div>
+    <div class="stat-card gold"><div class="stat-label">Total Savings Pool</div><div class="stat-value" id="statSavingsTotal">UGX 0</div></div>
     <div class="stat-card green"><div class="stat-label">Members Saving</div><div class="stat-value" id="statSavingsCount">0</div></div>
-    <div class="stat-card blue"><div class="stat-label">Avg Accumulated</div><div class="stat-value" id="statSavingsAvg">UGX 0</div></div>
-    <div class="stat-card purple"><div class="stat-label">Deferred Payouts</div><div class="stat-value" id="statDeferredTotal">UGX 0</div></div>
+    <div class="stat-card blue"><div class="stat-label">Avg Per Member</div><div class="stat-value" id="statSavingsAvg">UGX 0</div></div>
   </div>
 
-  <div style="max-width:1400px;margin:0 auto 10px;background:var(--accent2-light);border:1px solid #f0c060;border-radius:10px;padding:14px 18px;font-size:0.83rem;color:#7a5000;">
-    <strong>How savings accumulate:</strong> Each member sets a weekly savings rate. Every time a payment is ticked for a member in a week, their savings rate for that week is added to the pool. The pool total shown here reflects <em>actual paid weeks only</em>, not just scheduled weeks.
-  </div>
-
-  <div style="max-width:1400px;margin:12px auto 14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-    <button class="btn btn-gold" onclick="setAllSavings()">Set All to Same Rate</button>
+  <div style="max-width:1400px;margin:0 auto 14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <div style="font-size:0.82rem;color:var(--muted);">Set weekly savings amount per member below. This is deducted from the weekly payout.</div>
+    <button class="btn btn-gold" style="margin-left:auto;" onclick="setAllSavings()">Set All to Same Amount</button>
   </div>
 
   <div class="savings-summary" id="savingsList">
-    <h3>Member Savings — Accumulated from Paid Weeks</h3>
+    <h3>Member Savings</h3>
     <div id="savingsRows"></div>
   </div>
 
-  <!-- Deferred Payouts Section -->
-  <div class="deferred-list" id="deferredListWrap">
-    <h3>💛 Deferred Payout Records</h3>
-    <div id="deferredRows"><p style="color:var(--muted);font-size:0.82rem;">No deferred payouts yet.</p></div>
+  <div style="max-width:1400px;margin:0 auto 14px;">
+    <div style="background:var(--accent2-light);border:1px solid #f0c060;border-radius:10px;padding:14px 18px;font-size:0.83rem;color:#7a5000;">
+      <strong>How it works:</strong> Each member sets how much they save per week. The week's payout recipient receives the total collected minus the total savings pool. Their own savings is also deducted from what they receive.
+    </div>
   </div>
 </div>
 
 <!-- ═══════════════ PAYOUT TAB ═══════════════ -->
 <div id="tab-payout" class="tab-pane">
   <div style="max-width:1400px;margin:0 auto 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-    <div style="font-size:0.82rem;color:var(--muted);">Set which member receives the payout each week. A member can also choose to defer (save) their payout.</div>
+    <div style="font-size:0.82rem;color:var(--muted);">Drag or use the arrows to set which member receives the payout each week.</div>
     <button class="btn btn-primary" style="margin-left:auto;" onclick="autoAssignOrder()">Auto-Assign Order</button>
     <button class="btn btn-blue" onclick="clearOrder()">Clear Order</button>
   </div>
@@ -264,13 +271,6 @@ tr:hover td.sticky-col{background:#fafaf8;}
           </select>
         </div>
         <div id="payoutResult" style="font-size:0.83rem;color:var(--muted);">Select a week to calculate.</div>
-        <!-- Defer button shown after calculation -->
-        <div id="deferBtnWrap" style="display:none;margin-top:14px;">
-          <div style="background:#fffbf0;border:1px solid #e8d89a;border-radius:10px;padding:12px 14px;">
-            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">The recipient can choose to <strong>save their payout</strong> instead of receiving it in cash.</div>
-            <button class="btn btn-gold" onclick="openDeferPayout()">💛 Record as Saved (Deferred)</button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -280,7 +280,10 @@ tr:hover td.sticky-col{background:#fafaf8;}
       <table style="width:100%;">
         <thead>
           <tr>
-            <th>Order</th><th>Member</th><th>Phone</th><th>Deferred Total</th><th>Move</th>
+            <th>Order</th>
+            <th>Member</th>
+            <th>Phone</th>
+            <th>Move</th>
           </tr>
         </thead>
         <tbody id="orderTableBody"></tbody>
@@ -297,16 +300,27 @@ tr:hover td.sticky-col{background:#fafaf8;}
     <div class="stat-card green"><div class="stat-label">Repaid</div><div class="stat-value" id="statLoanRepaid">UGX 0</div></div>
     <div class="stat-card blue"><div class="stat-label">Active Loans</div><div class="stat-value" id="statLoanCount">0</div></div>
   </div>
+
   <div class="loans-header">
     <button class="btn btn-primary" onclick="openAddLoan()">+ Record Loan</button>
     <input class="search-input" id="loanSearch" placeholder="Search borrower…" oninput="renderLoans()" style="margin-left:auto;"/>
   </div>
+
   <div class="loans-table-wrap">
     <table style="width:100%;">
-      <thead><tr>
-        <th>Borrower</th><th>Amount</th><th>Date</th><th>Due Date</th>
-        <th>Repaid</th><th>Outstanding</th><th>Status</th><th>Note</th><th>Actions</th>
-      </tr></thead>
+      <thead>
+        <tr>
+          <th>Borrower</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Due Date</th>
+          <th>Repaid</th>
+          <th>Outstanding</th>
+          <th>Status</th>
+          <th>Note</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
       <tbody id="loansBody"></tbody>
     </table>
   </div>
@@ -316,8 +330,10 @@ tr:hover td.sticky-col{background:#fafaf8;}
 <div class="overlay" id="memberModal">
   <div class="modal">
     <h3 id="memberModalTitle">Add Member</h3>
-    <label>Full Name</label><input id="memberName" placeholder="e.g. Aisha Nakato"/>
-    <label>Phone Number</label><input id="memberPhone" placeholder="e.g. 0712 345678"/>
+    <label>Full Name</label>
+    <input id="memberName" placeholder="e.g. Aisha Nakato"/>
+    <label>Phone Number</label>
+    <input id="memberPhone" placeholder="e.g. 0712 345678"/>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('memberModal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveMember()">Save</button>
@@ -328,8 +344,10 @@ tr:hover td.sticky-col{background:#fafaf8;}
 <div class="overlay" id="columnModal">
   <div class="modal">
     <h3>Add Custom Column</h3>
-    <label>Column Name</label><input id="colName" placeholder="e.g. Registration Fee"/>
-    <label>Default Amount (UGX)</label><input id="colAmount" type="number" placeholder="e.g. 10000"/>
+    <label>Column Name</label>
+    <input id="colName" placeholder="e.g. Registration Fee"/>
+    <label>Default Amount (UGX)</label>
+    <input id="colAmount" type="number" placeholder="e.g. 10000"/>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('columnModal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveColumn()">Add Column</button>
@@ -342,10 +360,14 @@ tr:hover td.sticky-col{background:#fafaf8;}
     <h3 id="loanModalTitle">Record Loan</h3>
     <label>Borrower</label>
     <select id="loanMember" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.84rem;margin-bottom:10px;background:#fff;"></select>
-    <label>Loan Amount (UGX)</label><input id="loanAmount" type="number" placeholder="e.g. 500000"/>
-    <label>Date Issued</label><input id="loanDate" type="date"/>
-    <label>Due Date (optional)</label><input id="loanDue" type="date"/>
-    <label>Note (optional)</label><input id="loanNote" placeholder="e.g. For school fees"/>
+    <label>Loan Amount (UGX)</label>
+    <input id="loanAmount" type="number" placeholder="e.g. 500000"/>
+    <label>Date Issued</label>
+    <input id="loanDate" type="date"/>
+    <label>Due Date (optional)</label>
+    <input id="loanDue" type="date"/>
+    <label>Note (optional)</label>
+    <input id="loanNote" placeholder="e.g. For school fees"/>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('loanModal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveLoan()">Save Loan</button>
@@ -357,7 +379,8 @@ tr:hover td.sticky-col{background:#fafaf8;}
   <div class="modal">
     <h3>Record Repayment</h3>
     <div id="repayInfo" style="margin-bottom:12px;font-size:0.84rem;color:var(--muted);"></div>
-    <label>Repayment Amount (UGX)</label><input id="repayAmount" type="number" placeholder="Amount received"/>
+    <label>Repayment Amount (UGX)</label>
+    <input id="repayAmount" type="number" placeholder="Amount received"/>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('repayModal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveRepayment()">Record</button>
@@ -367,31 +390,13 @@ tr:hover td.sticky-col{background:#fafaf8;}
 
 <div class="overlay" id="setSavingsModal">
   <div class="modal">
-    <h3>Set All Savings Rate</h3>
-    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">This sets everyone's <strong>weekly savings rate</strong>. The pool accumulates based on actual paid weeks per member.</div>
-    <label>Amount Per Member Per Week (UGX)</label><input id="bulkSavingsAmt" type="number" placeholder="e.g. 5000"/>
+    <h3>Set All Savings</h3>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">This will set every member's weekly savings to the same amount.</div>
+    <label>Amount Per Member (UGX)</label>
+    <input id="bulkSavingsAmt" type="number" placeholder="e.g. 5000"/>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('setSavingsModal')">Cancel</button>
       <button class="btn btn-gold" onclick="applyBulkSavings()">Apply to All</button>
-    </div>
-  </div>
-</div>
-
-<!-- DEFER PAYOUT MODAL -->
-<div class="overlay" id="deferModal">
-  <div class="modal">
-    <h3>💛 Record Deferred Payout</h3>
-    <div id="deferInfo" style="background:var(--accent2-light);border-radius:8px;padding:12px;margin-bottom:14px;font-size:0.84rem;color:#7a5000;"></div>
-    <label>Payout Amount Being Saved (UGX)</label>
-    <input id="deferAmount" type="number" placeholder="Enter payout amount"/>
-    <label>Date</label>
-    <input id="deferDate" type="date"/>
-    <label>Note (optional)</label>
-    <input id="deferNote" placeholder="e.g. Wants to save for end-of-year"/>
-    <div style="font-size:0.78rem;color:var(--muted);margin-top:-4px;margin-bottom:10px;">This amount will be added to the member's savings record and to the group savings pool.</div>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeModal('deferModal')">Cancel</button>
-      <button class="btn btn-gold" onclick="saveDeferral()">✓ Record Deferral</button>
     </div>
   </div>
 </div>
@@ -400,66 +405,44 @@ tr:hover td.sticky-col{background:#fafaf8;}
 
 <script>
 let state = {
-  groupName:'',members:[],columns:[],payments:{},
-  savings:{},payoutOrder:[],loans:[],deferredPayouts:[]
+  groupName:'',
+  members:[],
+  columns:[],
+  payments:{},
+  savings:{},
+  payoutOrder:[],
+  loans:[]
 };
-let editingMemberId=null,repayingLoanId=null,nextMid=1,nextCid=1,nextLid=1,nextDid=1;
-let currentPayoutWeekIdx=null, currentPayoutRecipientId=null, currentPayoutAmount=0;
+let editingMemberId=null, editingLoanId=null, repayingLoanId=null;
+let nextMid=1, nextCid=1, nextLid=1;
 
-/* ── Persistence ── */
 function save(){
-  try{localStorage.setItem('sacco_v4',JSON.stringify({state,nextMid,nextCid,nextLid,nextDid}));}catch(e){}
+  try{localStorage.setItem('sacco_v3',JSON.stringify({state,nextMid,nextCid,nextLid}));}catch(e){}
 }
 function load(){
   try{
-    const d=localStorage.getItem('sacco_v4');
-    if(d){const p=JSON.parse(d);state=p.state;nextMid=p.nextMid||1;nextCid=p.nextCid||1;nextLid=p.nextLid||1;nextDid=p.nextDid||1;}
+    const d=localStorage.getItem('sacco_v3');
+    if(d){const p=JSON.parse(d);state=p.state;nextMid=p.nextMid||1;nextCid=p.nextCid||1;nextLid=p.nextLid||1;}
   }catch(e){}
-  if(!state.savings)state.savings={};
-  if(!state.payoutOrder)state.payoutOrder=[];
-  if(!state.loans)state.loans=[];
-  if(!state.deferredPayouts)state.deferredPayouts=[];
+  if(!state.savings) state.savings={};
+  if(!state.payoutOrder) state.payoutOrder=[];
+  if(!state.loans) state.loans=[];
 }
 
 function fmt(n){return Number(n||0).toLocaleString('en-UG');}
-function esc(s){return String(s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+function esc(s){return String(s||'').replace(/</g,'&lt;');}
 
 function getP(mid,cid){
-  if(!state.payments[mid])state.payments[mid]={};
+  if(!state.payments[mid]) state.payments[mid]={};
   if(!state.payments[mid][cid]){
     const col=state.columns.find(c=>c.id===cid);
     state.payments[mid][cid]={paid:false,amount:col?col.defaultAmount:0};
   }
   return state.payments[mid][cid];
 }
-function getSavingsRate(mid){return parseFloat(state.savings[mid]||0);}
+function getSavings(mid){return parseFloat(state.savings[mid]||0);}
 
-/* ── Accumulated savings for a member = rate × number of paid columns ── */
-function getAccumulatedSavings(mid){
-  const rate=getSavingsRate(mid);
-  if(!rate) return 0;
-  const paidWeeks=state.columns.filter(c=>getP(mid,c.id).paid).length;
-  return rate*paidWeeks;
-}
-
-/* ── Total deferred payouts for a member ── */
-function getMemberDeferred(mid){
-  return state.deferredPayouts.filter(d=>d.memberId===mid).reduce((s,d)=>s+d.amount,0);
-}
-
-/* ── Grand total accumulated pool = sum of all members' accumulated savings + all deferred payouts ── */
-function getTotalPool(){
-  const weekSavings=state.members.reduce((s,m)=>s+getAccumulatedSavings(m.id),0);
-  const deferred=state.deferredPayouts.reduce((s,d)=>s+d.amount,0);
-  return weekSavings+deferred;
-}
-
-/* ── Weekly savings deduction (sum of all members' rate, used in payout calc) ── */
-function getWeeklyTotal(){
-  return state.members.reduce((s,m)=>s+getSavingsRate(m.id),0);
-}
-
-/* ── Tab switching ── */
+// ── Tab switching ──
 function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
     const names=['payments','savings','payout','loans'];
@@ -467,52 +450,41 @@ function switchTab(name){
   });
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  if(name==='savings')renderSavings();
-  if(name==='payout')renderPayout();
-  if(name==='loans')renderLoans();
+  if(name==='savings') renderSavings();
+  if(name==='payout') renderPayout();
+  if(name==='loans') renderLoans();
 }
 
-/* ══════════════════════════════
-   PAYMENTS TABLE
-══════════════════════════════ */
+// ── Main Table ──
 function renderTable(){
   const q=(document.getElementById('searchInput').value||'').toLowerCase();
   const members=state.members.filter(m=>m.name.toLowerCase().includes(q));
 
   let hHtml=`<th class="sticky-col">Member</th>`;
   state.columns.forEach(c=>{
-    hHtml+=`<th style="text-align:center;">${esc(c.name)}<br>
-      <small>UGX ${fmt(c.defaultAmount)}</small>
-      <button onclick="removeColumn('${c.id}')" style="border:none;background:none;color:var(--danger);cursor:pointer;font-size:12px;margin-left:4px;">×</button>
-    </th>`;
+    hHtml+=`<th style="text-align:center;">${esc(c.name)}<br><small>UGX ${fmt(c.defaultAmount)}</small> <button onclick="removeColumn('${c.id}')" style="border:none;background:none;color:var(--danger);cursor:pointer;font-size:12px;">×</button></th>`;
   });
-  hHtml+=`<th>Savings Rate/wk</th><th>Accumulated Savings</th><th>Paid to Date</th>`;
+  hHtml+=`<th>Total Paid</th>`;
   document.getElementById('headerRow').innerHTML=hHtml;
 
   const body=document.getElementById('tableBody');
   if(!members.length){
     body.innerHTML=`<tr><td colspan="100" style="text-align:center;padding:40px;color:var(--muted);">No members yet. Add your first member above.</td></tr>`;
-    renderStats();updatePoolBanner();return;
+    renderStats();return;
   }
 
   body.innerHTML=members.map(m=>{
     let rowTotal=0;
     const cells=state.columns.map(c=>{
       const p=getP(m.id,c.id);
-      if(p.paid)rowTotal+=p.amount;
+      if(p.paid) rowTotal+=p.amount;
       const cbId=`cb_${m.id}_${c.id}`;
       return `<td style="text-align:center;">
-        <input type="checkbox" class="pay-check" id="${cbId}" ${p.paid?'checked':''}
-          onchange="togglePaid('${m.id}','${c.id}',this.checked)">
-        <label class="check-label" for="${cbId}">
-          <div class="check-box">${p.paid?'<span style=\'color:#fff;font-weight:700;font-size:13px;\'>✓</span>':''}</div>
-        </label>
-        <input class="amt-input" type="number" value="${p.amount}"
-          onchange="setAmt('${m.id}','${c.id}',this.value)">
+        <input type="checkbox" class="pay-check" id="${cbId}" ${p.paid?'checked':''} onchange="togglePaid('${m.id}','${c.id}',this.checked)">
+        <label class="check-label" for="${cbId}"><div class="check-box"></div></label>
+        <input class="amt-input" type="number" value="${p.amount}" onchange="setAmt('${m.id}','${c.id}',this.value)">
       </td>`;
     }).join('');
-    const rate=getSavingsRate(m.id);
-    const accum=getAccumulatedSavings(m.id);
     return `<tr>
       <td class="sticky-col">
         <strong>${esc(m.name)}</strong><br>
@@ -523,32 +495,18 @@ function renderTable(){
         </div>
       </td>
       ${cells}
-      <td style="color:var(--accent2);font-weight:600;">UGX ${fmt(rate)}</td>
-      <td><span class="sav-accumulated">UGX ${fmt(accum)}</span></td>
       <td style="color:var(--accent);font-weight:700;">UGX ${fmt(rowTotal)}</td>
     </tr>`;
   }).join('');
-  renderStats();updatePoolBanner();
+  renderStats();
 }
-
-function togglePaid(mid,cid,checked){
-  getP(mid,cid).paid=checked;
-  save();
-  renderTable();
-  // Pulse the banner to signal update
-  const banner=document.getElementById('poolBanner');
-  banner.classList.remove('pool-pulse');
-  void banner.offsetWidth;
-  banner.classList.add('pool-pulse');
-}
-function setAmt(mid,cid,val){getP(mid,cid).amount=parseFloat(val)||0;save();renderTable();}
 
 function renderStats(){
   let total=0,unpaid=0;
   state.members.forEach(m=>{
     state.columns.forEach(c=>{
       const p=getP(m.id,c.id);
-      if(p.paid)total+=p.amount; else unpaid++;
+      if(p.paid) total+=p.amount; else unpaid++;
     });
   });
   document.getElementById('statMembers').innerText=state.members.length;
@@ -557,134 +515,75 @@ function renderStats(){
   document.getElementById('statUnpaid').innerText=unpaid;
 }
 
-function updatePoolBanner(){
-  const pool=getTotalPool();
-  const weekly=getWeeklyTotal();
-  const deferred=state.deferredPayouts.reduce((s,d)=>s+d.amount,0);
-  document.getElementById('bannerPoolTotal').innerText='UGX '+fmt(pool);
-  document.getElementById('bannerWeekSavings').innerText='UGX '+fmt(weekly);
-  document.getElementById('bannerDeferred').innerText='UGX '+fmt(deferred);
-}
-
-/* ══════════════════════════════
-   SAVINGS TAB
-══════════════════════════════ */
+// ── Savings ──
 function renderSavings(){
-  let totalPool=0,count=0;
+  let total=0,count=0;
   const rows=state.members.map(m=>{
-    const rate=getSavingsRate(m.id);
-    const accum=getAccumulatedSavings(m.id);
-    const deferred=getMemberDeferred(m.id);
-    const paidWeeks=state.columns.filter(c=>getP(m.id,c.id).paid).length;
-    if(rate>0){totalPool+=accum;count++;}
+    const s=getSavings(m.id);
+    if(s>0){total+=s;count++;}
     return `<div class="sav-row">
-      <div>
-        <strong>${esc(m.name)}</strong><br>
-        <small style="color:var(--muted);">${esc(m.phone)}</small><br>
-        <small style="color:var(--muted);">${paidWeeks} week(s) paid</small>
-      </div>
+      <div><strong>${esc(m.name)}</strong><br><small style="color:var(--muted);">${esc(m.phone)}</small></div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:0.72rem;color:var(--muted);">Rate/week:</span>
-        <input class="sav-input" type="number" value="${rate}" placeholder="0"
-          onchange="setSavings('${m.id}',this.value)" style="width:100px;">
+        <span style="font-size:0.75rem;color:var(--muted);">UGX/week</span>
+        <input class="sav-input" type="number" value="${s}" placeholder="0"
+          onchange="setSavings('${m.id}',this.value)" style="width:110px;">
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-        <span class="sav-accumulated">Pool: UGX ${fmt(accum)}</span>
-        ${deferred>0?`<span class="sav-deferred">+ Deferred: UGX ${fmt(deferred)}</span>`:''}
-        <small style="color:var(--muted);font-size:0.7rem;">Total: UGX ${fmt(accum+deferred)}</small>
-      </div>
+      <div style="font-weight:700;color:var(--accent2);min-width:120px;text-align:right;">UGX ${fmt(s)}</div>
     </div>`;
   }).join('');
-
   document.getElementById('savingsRows').innerHTML=rows||`<p style="color:var(--muted);font-size:0.82rem;">Add members first.</p>`;
-
-  const totalDeferred=state.deferredPayouts.reduce((s,d)=>s+d.amount,0);
-  document.getElementById('statSavingsTotal').innerText='UGX '+fmt(totalPool+totalDeferred);
+  document.getElementById('statSavingsTotal').innerText='UGX '+fmt(total);
   document.getElementById('statSavingsCount').innerText=count;
-  document.getElementById('statSavingsAvg').innerText=state.members.length?'UGX '+fmt(Math.round((totalPool+totalDeferred)/state.members.length)):'UGX 0';
-  document.getElementById('statDeferredTotal').innerText='UGX '+fmt(totalDeferred);
-
-  renderDeferredList();
+  document.getElementById('statSavingsAvg').innerText=state.members.length?'UGX '+fmt(Math.round(total/state.members.length)):'UGX 0';
 }
 
 function setSavings(mid,val){
   state.savings[mid]=parseFloat(val)||0;
-  save();renderSavings();updatePoolBanner();
+  save();renderSavings();
 }
+
 function setAllSavings(){openModal('setSavingsModal');}
 function applyBulkSavings(){
   const amt=parseFloat(document.getElementById('bulkSavingsAmt').value)||0;
   state.members.forEach(m=>{state.savings[m.id]=amt;});
-  closeModal('setSavingsModal');save();renderSavings();updatePoolBanner();toast('Savings rate updated for all members');
+  closeModal('setSavingsModal');save();renderSavings();toast('Savings updated for all members');
 }
 
-function renderDeferredList(){
-  const wrap=document.getElementById('deferredRows');
-  if(!state.deferredPayouts.length){
-    wrap.innerHTML=`<p style="color:var(--muted);font-size:0.82rem;">No deferred payouts recorded yet.</p>`;return;
-  }
-  wrap.innerHTML=state.deferredPayouts.map(d=>{
-    const m=state.members.find(x=>x.id===d.memberId);
-    const col=state.columns.find(x=>x.id===d.colId)||{name:'Week '+(d.weekIdx+1)};
-    return `<div class="deferred-row">
-      <div class="payout-num" style="background:var(--accent2);">💛</div>
-      <div style="flex:1">
-        <strong>${m?esc(m.name):'Unknown'}</strong>
-        <span class="deferred-badge" style="margin-left:8px;">${esc(col.name)}</span>
-        ${d.note?`<div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">${esc(d.note)}</div>`:''}
-      </div>
-      <div style="font-weight:700;color:var(--accent2);white-space:nowrap;">UGX ${fmt(d.amount)}</div>
-      <div style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">${d.date||''}</div>
-      <button class="btn btn-sm btn-danger" onclick="removeDeferred('${d.id}')">×</button>
-    </div>`;
-  }).join('');
-}
-
-function removeDeferred(id){
-  if(confirm('Remove this deferred payout record?')){
-    state.deferredPayouts=state.deferredPayouts.filter(d=>d.id!==id);
-    save();renderSavings();updatePoolBanner();toast('Record removed');
-  }
-}
-
-/* ══════════════════════════════
-   PAYOUT TAB
-══════════════════════════════ */
+// ── Payout Order ──
 function renderPayout(){
+  // Sync order: remove deleted members, add new ones
   const ids=state.members.map(m=>m.id);
   state.payoutOrder=state.payoutOrder.filter(id=>ids.includes(id));
-  ids.forEach(id=>{if(!state.payoutOrder.includes(id))state.payoutOrder.push(id);});
+  ids.forEach(id=>{if(!state.payoutOrder.includes(id)) state.payoutOrder.push(id);});
 
+  // Schedule
   const schedHtml=state.payoutOrder.map((id,i)=>{
     const m=state.members.find(x=>x.id===id);
-    if(!m)return '';
+    if(!m) return '';
     const col=state.columns[i];
-    const deferred=getMemberDeferred(id);
     return `<div class="payout-row">
       <div class="payout-num">${i+1}</div>
-      <div style="flex:1"><strong>${esc(m.name)}</strong>
-        ${deferred>0?`<br><small style="color:var(--accent2);">Saved: UGX ${fmt(deferred)}</small>`:''}
-      </div>
+      <div style="flex:1"><strong>${esc(m.name)}</strong></div>
       <div style="color:var(--muted);font-size:0.78rem;">${col?esc(col.name):'Week '+(i+1)}</div>
     </div>`;
   }).join('');
   document.getElementById('payoutSchedule').innerHTML=schedHtml||`<p style="color:var(--muted);font-size:0.82rem;">No members yet.</p>`;
 
+  // Week selector for calculator
   const sel=document.getElementById('payoutWeekSelect');
   sel.innerHTML=`<option value="">-- Choose Week --</option>`+state.columns.map((c,i)=>`<option value="${i}">${esc(c.name)}</option>`).join('');
 
+  // Order table
   const tbody=document.getElementById('orderTableBody');
   tbody.innerHTML=state.payoutOrder.map((id,i)=>{
     const m=state.members.find(x=>x.id===id);
-    if(!m)return '';
-    const deferred=getMemberDeferred(id);
+    if(!m) return '';
     return `<tr>
       <td><span class="order-badge">${i+1}</span></td>
       <td><strong>${esc(m.name)}</strong></td>
       <td style="color:var(--muted);">${esc(m.phone)}</td>
-      <td>${deferred>0?`<span class="sav-deferred">UGX ${fmt(deferred)}</span>`:'<span style="color:var(--muted);font-size:0.78rem;">—</span>'}</td>
       <td>
-        ${i>0?`<button class="btn btn-sm btn-blue" onclick="moveOrder('${id}',-1)">▲ Up</button> `:''}
+        ${i>0?`<button class="btn btn-sm btn-blue" onclick="moveOrder('${id}',-1)">▲ Up</button>`:''}
         ${i<state.payoutOrder.length-1?`<button class="btn btn-sm" style="background:var(--surface);" onclick="moveOrder('${id}',1)">▼ Down</button>`:''}
       </td>
     </tr>`;
@@ -693,46 +592,44 @@ function renderPayout(){
 
 function moveOrder(id,dir){
   const i=state.payoutOrder.indexOf(id);
-  if(i+dir<0||i+dir>=state.payoutOrder.length)return;
+  if(i+dir<0||i+dir>=state.payoutOrder.length) return;
   [state.payoutOrder[i],state.payoutOrder[i+dir]]=[state.payoutOrder[i+dir],state.payoutOrder[i]];
   save();renderPayout();
 }
-function autoAssignOrder(){state.payoutOrder=state.members.map(m=>m.id);save();renderPayout();toast('Order assigned');}
-function clearOrder(){state.payoutOrder=[];save();renderPayout();}
+
+function autoAssignOrder(){
+  state.payoutOrder=state.members.map(m=>m.id);
+  save();renderPayout();toast('Order assigned');
+}
+function clearOrder(){
+  state.payoutOrder=[];save();renderPayout();
+}
 
 function calcPayout(){
   const weekIdx=parseInt(document.getElementById('payoutWeekSelect').value);
   const res=document.getElementById('payoutResult');
-  const deferWrap=document.getElementById('deferBtnWrap');
-  currentPayoutWeekIdx=null;
-  currentPayoutRecipientId=null;
-  currentPayoutAmount=0;
-  deferWrap.style.display='none';
-
   if(isNaN(weekIdx)){res.innerHTML='<p style="color:var(--muted);">Select a week.</p>';return;}
+
   const col=state.columns[weekIdx];
   if(!col){res.innerHTML='<p style="color:var(--muted);">Week not found.</p>';return;}
 
+  // Total collected this week
   let collected=0;
   state.members.forEach(m=>{
     const p=getP(m.id,col.id);
-    if(p.paid)collected+=p.amount;
+    if(p.paid) collected+=p.amount;
   });
 
-  const totalSavings=state.members.reduce((s,m)=>s+getSavingsRate(m.id),0);
+  // Total savings this week
+  const totalSavings=state.members.reduce((s,m)=>s+getSavings(m.id),0);
+
+  // Who receives?
   const recipientId=state.payoutOrder[weekIdx];
   const recipient=recipientId?state.members.find(m=>m.id===recipientId):null;
-  const recipSavings=recipient?getSavingsRate(recipient.id):0;
+  const recipSavings=recipient?getSavings(recipient.id):0;
 
-  const poolAfterSavings=collected-totalSavings;
-  const recipPayout=poolAfterSavings-recipSavings;
-
-  // Check if already deferred
-  const alreadyDeferred=state.deferredPayouts.some(d=>d.colId===col.id&&d.memberId===recipientId);
-
-  currentPayoutWeekIdx=weekIdx;
-  currentPayoutRecipientId=recipientId;
-  currentPayoutAmount=Math.max(0,recipPayout);
+  const payout=collected-totalSavings;
+  const recipPayout=payout-recipSavings;
 
   res.innerHTML=`
     <div style="display:grid;gap:8px;">
@@ -748,67 +645,28 @@ function calcPayout(){
       <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ece4;">
         <span style="color:var(--muted);">Recipient's own savings</span><span style="color:var(--accent2);">− UGX ${fmt(recipSavings)}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;background:var(--accent-light);border-radius:8px;padding:10px 12px;margin-top:4px;">
-        <span style="font-weight:700;">Recipient: ${recipient?esc(recipient.name):'<em style=\'color:var(--muted);font-style:italic;\'>Not assigned</em>'}</span>
-        <strong style="color:var(--accent);font-size:1.05rem;">UGX ${fmt(Math.max(0,recipPayout))}</strong>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;background:var(--accent-light);border-radius:8px;padding:10px 12px;margin-top:4px;">
+        <span style="font-weight:700;">Recipient: ${recipient?esc(recipient.name):'<em>Not assigned</em>'}</span>
+        <strong style="color:var(--accent);font-size:1.05rem;">UGX ${fmt(recipPayout)}</strong>
       </div>
-      ${alreadyDeferred?'<div style="background:#fff3e0;border-radius:8px;padding:8px 12px;font-size:0.78rem;color:var(--accent2);">⚠️ A deferral has already been recorded for this week for this recipient.</div>':''}
     </div>`;
-
-  // Show defer button only if recipient is assigned and not already deferred
-  if(recipient && !alreadyDeferred){
-    deferWrap.style.display='block';
-  }
 }
 
-/* ── Deferred payout flow ── */
-function openDeferPayout(){
-  if(currentPayoutWeekIdx===null||!currentPayoutRecipientId)return;
-  const m=state.members.find(x=>x.id===currentPayoutRecipientId);
-  const col=state.columns[currentPayoutWeekIdx];
-  document.getElementById('deferInfo').innerHTML=
-    `<strong>${m?esc(m.name):'Unknown'}</strong> is saving their payout for <strong>${col?esc(col.name):'this week'}</strong> instead of receiving it.<br>
-     Calculated payout: <strong style="color:var(--accent);">UGX ${fmt(currentPayoutAmount)}</strong>`;
-  document.getElementById('deferAmount').value=currentPayoutAmount||'';
-  document.getElementById('deferDate').value=new Date().toISOString().split('T')[0];
-  document.getElementById('deferNote').value='';
-  openModal('deferModal');
-}
-
-function saveDeferral(){
-  const amt=parseFloat(document.getElementById('deferAmount').value)||0;
-  if(!amt)return alert('Enter the amount being saved.');
-  const col=state.columns[currentPayoutWeekIdx];
-  state.deferredPayouts.push({
-    id:'d'+nextDid++,
-    memberId:currentPayoutRecipientId,
-    colId:col?col.id:null,
-    weekIdx:currentPayoutWeekIdx,
-    amount:amt,
-    date:document.getElementById('deferDate').value,
-    note:document.getElementById('deferNote').value
-  });
-  closeModal('deferModal');save();
-  updatePoolBanner();
-  calcPayout(); // refresh calculator to show deferred notice
-  toast('Deferred payout recorded and added to savings pool');
-}
-
-/* ══════════════════════════════
-   LOANS TAB
-══════════════════════════════ */
+// ── Loans ──
 function renderLoans(){
   const q=(document.getElementById('loanSearch')||{value:''}).value.toLowerCase();
   const loans=state.loans.filter(l=>{
     const m=state.members.find(x=>x.id===l.memberId);
-    return !q||(m&&m.name.toLowerCase().includes(q));
+    return !m||m.name.toLowerCase().includes(q);
   });
+
   let loanTotal=0,outstanding=0,repaid=0,active=0;
   state.loans.forEach(l=>{
     loanTotal+=l.amount;
     const bal=l.amount-(l.repaid||0);
-    outstanding+=bal;repaid+=(l.repaid||0);
-    if(bal>0)active++;
+    outstanding+=bal;
+    repaid+=(l.repaid||0);
+    if(bal>0) active++;
   });
   document.getElementById('statLoanTotal').innerText='UGX '+fmt(loanTotal);
   document.getElementById('statLoanOutstanding').innerText='UGX '+fmt(outstanding);
@@ -816,7 +674,10 @@ function renderLoans(){
   document.getElementById('statLoanCount').innerText=active;
 
   const body=document.getElementById('loansBody');
-  if(!loans.length){body.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted);">No loans recorded yet.</td></tr>`;return;}
+  if(!loans.length){
+    body.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted);">No loans recorded yet.</td></tr>`;
+    return;
+  }
   body.innerHTML=loans.map(l=>{
     const m=state.members.find(x=>x.id===l.memberId);
     const balance=l.amount-(l.repaid||0);
@@ -827,9 +688,10 @@ function renderLoans(){
     return `<tr>
       <td><strong>${m?esc(m.name):'Unknown'}</strong><br><small style="color:var(--muted);">${m?esc(m.phone):''}</small></td>
       <td style="font-weight:700;">UGX ${fmt(l.amount)}</td>
-      <td>${l.date||'—'}</td><td>${l.due||'—'}</td>
+      <td>${l.date||'—'}</td>
+      <td>${l.due||'—'}</td>
       <td style="color:var(--accent);">UGX ${fmt(l.repaid||0)}</td>
-      <td style="color:${balance>0?'var(--danger)':'var(--accent)'};font-weight:700;">UGX ${fmt(Math.max(0,balance))}</td>
+      <td style="color:${balance>0?'var(--danger)':'var(--accent)'}; font-weight:700;">UGX ${fmt(Math.max(0,balance))}</td>
       <td><span class="loan-status ${statusClass}">${status}</span></td>
       <td style="color:var(--muted);font-size:0.78rem;">${esc(l.note||'')}</td>
       <td>
@@ -841,21 +703,33 @@ function renderLoans(){
 }
 
 function openAddLoan(){
+  editingLoanId=null;
   const sel=document.getElementById('loanMember');
   sel.innerHTML=state.members.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('');
   document.getElementById('loanAmount').value='';
   document.getElementById('loanDate').value=new Date().toISOString().split('T')[0];
   document.getElementById('loanDue').value='';
   document.getElementById('loanNote').value='';
+  document.getElementById('loanModalTitle').innerText='Record Loan';
   openModal('loanModal');
 }
+
 function saveLoan(){
   const mid=document.getElementById('loanMember').value;
   const amount=parseFloat(document.getElementById('loanAmount').value)||0;
-  if(!mid||!amount)return alert('Member and amount required.');
-  state.loans.push({id:'l'+nextLid++,memberId:mid,amount,date:document.getElementById('loanDate').value,due:document.getElementById('loanDue').value,note:document.getElementById('loanNote').value,repaid:0});
+  if(!mid||!amount) return alert('Member and amount required.');
+  state.loans.push({
+    id:'l'+nextLid++,
+    memberId:mid,
+    amount,
+    date:document.getElementById('loanDate').value,
+    due:document.getElementById('loanDue').value,
+    note:document.getElementById('loanNote').value,
+    repaid:0
+  });
   closeModal('loanModal');save();renderLoans();toast('Loan recorded');
 }
+
 function openRepay(lid){
   repayingLoanId=lid;
   const l=state.loans.find(x=>x.id===lid);
@@ -865,39 +739,52 @@ function openRepay(lid){
   document.getElementById('repayAmount').value='';
   openModal('repayModal');
 }
+
 function saveRepayment(){
   const amt=parseFloat(document.getElementById('repayAmount').value)||0;
-  if(!amt)return alert('Enter an amount.');
+  if(!amt) return alert('Enter an amount.');
   const l=state.loans.find(x=>x.id===repayingLoanId);
   l.repaid=(l.repaid||0)+amt;
   closeModal('repayModal');save();renderLoans();toast('Repayment recorded');
 }
-function removeLoan(id){if(confirm('Remove this loan?')){state.loans=state.loans.filter(l=>l.id!==id);save();renderLoans();}}
 
-/* ── Members & Columns ── */
+function removeLoan(id){
+  if(confirm('Remove this loan record?')){
+    state.loans=state.loans.filter(l=>l.id!==id);
+    save();renderLoans();
+  }
+}
+
+// ── Members & Columns ──
+function togglePaid(mid,cid,checked){getP(mid,cid).paid=checked;save();renderTable();}
+function setAmt(mid,cid,val){getP(mid,cid).amount=parseFloat(val)||0;save();renderTable();}
+
 function saveMember(){
   const name=document.getElementById('memberName').value.trim();
   const phone=document.getElementById('memberPhone').value.trim();
-  if(!name)return alert('Name is required.');
+  if(!name) return alert('Name is required.');
   if(editingMemberId){
-    const m=state.members.find(x=>x.id===editingMemberId);m.name=name;m.phone=phone;
-  }else{
+    const m=state.members.find(x=>x.id===editingMemberId);
+    m.name=name;m.phone=phone;
+  } else {
     state.members.push({id:'m'+nextMid++,name,phone});
   }
   closeModal('memberModal');save();renderTable();toast('Member saved');
 }
+
 function saveColumn(){
   const name=document.getElementById('colName').value.trim();
   const amount=parseFloat(document.getElementById('colAmount').value)||0;
-  if(!name)return alert('Column name required.');
+  if(!name) return alert('Column name required.');
   state.columns.push({id:'c'+nextCid++,name,defaultAmount:amount});
   closeModal('columnModal');save();renderTable();
 }
+
 function generateWeeks(){
   const startVal=document.getElementById('weekStart').value;
   const count=parseInt(document.getElementById('weekCount').value)||1;
   const amt=parseFloat(document.getElementById('weekAmount').value)||0;
-  if(!startVal)return alert('Select start date.');
+  if(!startVal) return alert('Select start date.');
   let d=new Date(startVal);
   for(let i=0;i<count;i++){
     const label=`Wk ${i+1} (${d.toLocaleDateString('en-UG',{day:'2-digit',month:'short'})})`;
@@ -908,33 +795,38 @@ function generateWeeks(){
 }
 
 function exportCSV(){
-  let csv='Name,Phone,Savings Rate/wk,Accumulated Savings,Deferred Payouts,'+state.columns.map(c=>c.name).join(',')+',Total Paid\n';
+  let csv='Name,Phone,Weekly Savings,'+state.columns.map(c=>c.name).join(',')+',Total\n';
   state.members.forEach(m=>{
-    let row=`${m.name},${m.phone},${getSavingsRate(m.id)},${getAccumulatedSavings(m.id)},${getMemberDeferred(m.id)}`;
+    let row=`${m.name},${m.phone},${getSavings(m.id)}`;
     let total=0;
     state.columns.forEach(c=>{
       const p=getP(m.id,c.id);
       row+=`,${p.paid?p.amount:0}`;
-      if(p.paid)total+=p.amount;
+      if(p.paid) total+=p.amount;
     });
     csv+=`${row},${total}\n`;
   });
   const blob=new Blob([csv],{type:'text/csv'});
   const url=window.URL.createObjectURL(blob);
-  const a=document.createElement('a');a.setAttribute('hidden','');a.setAttribute('href',url);a.setAttribute('download','sacco_report.csv');
+  const a=document.createElement('a');
+  a.setAttribute('hidden','');a.setAttribute('href',url);a.setAttribute('download','sacco_report.csv');
   document.body.appendChild(a);a.click();document.body.removeChild(a);
 }
-function clearAll(){if(confirm('Delete ALL data? This cannot be undone.')){localStorage.removeItem('sacco_v4');location.reload();}}
+
+function clearAll(){
+  if(confirm('Delete ALL data? This cannot be undone.')){
+    localStorage.removeItem('sacco_v3');location.reload();
+  }
+}
+
 function openAddMember(){editingMemberId=null;document.getElementById('memberName').value='';document.getElementById('memberPhone').value='';document.getElementById('memberModalTitle').innerText='Add Member';openModal('memberModal');}
 function openEditMember(id){editingMemberId=id;const m=state.members.find(x=>x.id===id);document.getElementById('memberName').value=m.name;document.getElementById('memberPhone').value=m.phone||'';document.getElementById('memberModalTitle').innerText='Edit Member';openModal('memberModal');}
-function openAddColumn(){document.getElementById('colName').value='';document.getElementById('colAmount').value='';openModal('columnModal');}
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function toggleWeekStrip(){const s=document.getElementById('weekStrip');s.style.display=s.style.display==='none'?'flex':'none';}
+function toast(m){const t=document.getElementById('toast');t.innerText=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 function removeMember(id){if(confirm('Remove this member?')){state.members=state.members.filter(m=>m.id!==id);state.payoutOrder=state.payoutOrder.filter(x=>x!==id);save();renderTable();}}
 function removeColumn(id){if(confirm('Remove this column?')){state.columns=state.columns.filter(c=>c.id!==id);save();renderTable();}}
-let toastT;
-function toast(m){const t=document.getElementById('toast');t.innerText=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);}
 
 window.onload=()=>{
   load();
